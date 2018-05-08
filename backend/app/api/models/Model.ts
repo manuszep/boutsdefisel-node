@@ -22,6 +22,19 @@ abstract class Model {
         this._dirty = {};
     }
 
+    protected query(query, data, success):Promise<any> {
+      return new Promise ((resolve, reject) => {
+        connection.query(query, data)
+          .then(result => {
+            resolve(success(result));
+          })
+          .catch(err => {
+            reject(err)
+          });
+      })
+    }
+
+
     persist():Promise<any> {
       return new Promise((resolve, reject) => {
         if (this._inDb) {

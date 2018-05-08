@@ -1,5 +1,4 @@
 import Model from "./Model";
-import connection from "../../lib/db";
 
 class UserModel extends Model {
   protected tableName = "users";
@@ -45,17 +44,14 @@ class UserModel extends Model {
   }
 
   create():Promise<number> {
-    return new Promise ((resolve, reject) => {
-      connection.query(`INSERT INTO ${this.tableName} SET ?`, this.serialize())
-        .then(result => {
-          this.id = result.insertId;
-          this.setClean();
-          resolve(this.id)
-        })
-        .catch(function(err) {
-          reject(err)
-        });
-      })
+    return this.query(
+      `INSERT INTO ${this.tableName} SET ?`,
+      this.serialize(),
+      result => {
+        this.id = result.insertId;
+        this.setClean();
+        return this.id;
+    });
   }
 
   update() {
@@ -68,23 +64,23 @@ class UserModel extends Model {
       values.push(this[key]);
     }
 
-    connection.query(`UPDATE ${this.tableName} SET${setters.replace(/,\s*$/, "")} Where ID = ${this.id}`,values)
-      .then(result => {
+    return this.query(
+      `UPDATE ${this.tableName} SET${setters.replace(/,\s*$/, "")} Where ID = ${this.id}`,
+      values,
+      result => {
+        this.id = result.insertId;
         this.setClean();
-      })
-      .catch(err => {
-        throw err;
-      });
+        return this.id;
+    });
   }
 
   delete() {
-    connection.query(`DELETE FROM ${this.tableName} WHERE id = ?`, [this.id])
-      .then(result => {
+    return this.query(
+      `DELETE FROM ${this.tableName} WHERE id = ?`,
+      [this.id],
+      result => {
         return true;
-      })
-      .catch(err => {
-        throw err;
-      });
+    });
   }
 }
 
