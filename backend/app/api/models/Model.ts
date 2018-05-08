@@ -25,7 +25,7 @@ abstract class Model {
     persist():Promise<any> {
       return new Promise((resolve, reject) => {
         if (this._inDb) {
-          resolve();
+          this.update();
         } else {
           this.create()
           .then(id => {
