@@ -1,22 +1,15 @@
-import connection from "../../lib/db";
+import Model from "./Model";
 
-class UserModel {
-  private _inDb:boolean = false;
-  private _dirty:{ [s: string]: boolean; } = {};
-  private _id:number;
-
-  get id():number {
-    return this._id;
-  }
-  
+class UserModel extends Model {
   private _username:string;
+  protected tableName = "users";
 
   get username():string {
     return this._username;
   }
 
   set username(username:string) {
-    this._dirty["username"] = true;
+    this.setDirty("username");
     this._username = username;
   }
   
@@ -27,7 +20,7 @@ class UserModel {
   }
 
   set email(email:string) {
-    this._dirty["email"] = true;
+    this.setDirty("email");
     this._email = email;
   }
 
@@ -37,21 +30,13 @@ class UserModel {
       "email": this.email
     }
   }
-  
-  persist() {
-    if (this._inDb) {
-      return this.update();
-    }
 
-    return this.create();
-  }
-
-  create() {
-    connection.query('INSERT INTO users SET ?', this.toKeyValue(), (err, res) => {
+  create():void {
+    this.connection.query('INSERT INTO users SET ?', this.toKeyValue(), (err, res) => {
       if(err) throw err;
 
-      this._id = res.insertId;
-      this._dirty = {};
+      this.id = res.insertId;
+      this.setClean();
     });
   }
 
@@ -65,19 +50,19 @@ class UserModel {
       values.push(this[key]);
     }
     
-    connection.query(
+    this.connection.query(
       `UPDATE users SET${setters.replace(/,\s*$/, "")} Where ID = ${this.id}`,
       values,
       (err, result) => {
         if (err) throw err;
     
-        this._dirty = {};
+        this.setClean();
       }
     );
   }
 
   delete() {
-    connection.query(
+    this.connection.query(
       'DELETE FROM users WHERE id = ?', [this.id], (err, result) => {
         if (err) throw err;
       }
