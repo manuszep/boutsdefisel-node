@@ -8,6 +8,7 @@ class UserModel extends Model {
     super();
 
     if (typeof data !== "undefined") {
+      this.id = data.id;
       this.username = data.username;
       this.email = data.email;
     }
