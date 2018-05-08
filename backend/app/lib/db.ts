@@ -1,8 +1,6 @@
-import mysql from 'mysql';
+import mysql = require('promise-mysql');
 import dbConfig from '../config/db.js';
 
-const connection = mysql.createConnection(dbConfig);
-
-connection.connect();
+const connection = mysql.createPool(dbConfig);
 
 export default connection;

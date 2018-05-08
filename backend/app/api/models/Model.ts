@@ -1,16 +1,15 @@
 import connection from "../../lib/db";
 
 abstract class Model {
-    protected connection = connection;
     protected tableName;
     protected _inDb:boolean = false;
     protected _dirty:{ [s: string]: boolean; } = {};
     protected _id:number;
-  
+
     set id(id:number) {
       this._id = id;
     }
-  
+
     get id():number {
       return this._id;
     }
@@ -22,20 +21,29 @@ abstract class Model {
     protected setClean() {
         this._dirty = {};
     }
-  
-    persist():void {
-      if (this._inDb) {
-        this.update();
-      }
-  
-      this.create();
+
+    persist():Promise<any> {
+      return new Promise((resolve, reject) => {
+        if (this._inDb) {
+          resolve();
+        } else {
+          this.create()
+          .then(id => {
+            resolve(id);
+          })
+          .catch(err => {
+            reject(err);
+          });
+        }
+      });
+
     }
 
-    abstract toKeyValue():{ [s: string]: any; };
+    abstract serialize():{ [s: string]: any; };
 
     abstract update():void;
 
-    abstract create():void;
+    abstract create():Promise<number>;
 }
 
 export default Model;

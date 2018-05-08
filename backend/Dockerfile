@@ -10,6 +10,4 @@ RUN npm install
 
 EXPOSE 7070
 
-RUN npm run dev
-
 ENTRYPOINT [ "pm2-runtime", "dist/", "--watch" ]

@@ -1,9 +1,10 @@
 import Model from "./Model";
+import connection from "../../lib/db";
 
 class UserModel extends Model {
   protected tableName = "users";
 
-  constructor(data:{ [key: string]: any }) {
+  constructor(data?:{ [key: string]: any }) {
     super();
 
     if (typeof data !== "undefined") {
@@ -22,7 +23,7 @@ class UserModel extends Model {
     this.setDirty("username");
     this._username = username;
   }
-  
+
   private _email:string;
 
   get email():string {
@@ -34,20 +35,26 @@ class UserModel extends Model {
     this._email = email;
   }
 
-  toKeyValue() {
+  serialize() {
     return {
+      "id": this.id,
       "username": this.username,
       "email": this.email
     }
   }
 
-  create():void {
-    this.connection.query(`INSERT INTO ${this.tableName} SET ?`, this.toKeyValue(), (err, res) => {
-      if(err) throw err;
-
-      this.id = res.insertId;
-      this.setClean();
-    });
+  create():Promise<number> {
+    return new Promise ((resolve, reject) => {
+      connection.query(`INSERT INTO ${this.tableName} SET ?`, this.serialize())
+        .then(result => {
+          this.id = result.insertId;
+          this.setClean();
+          resolve(this.id)
+        })
+        .catch(function(err) {
+          reject(err)
+        });
+      })
   }
 
   update() {
@@ -59,24 +66,24 @@ class UserModel extends Model {
       setters += ` ${key} = ?,`;
       values.push(this[key]);
     }
-    
-    this.connection.query(
-      `UPDATE ${this.tableName} SET${setters.replace(/,\s*$/, "")} Where ID = ${this.id}`,
-      values,
-      (err, result) => {
-        if (err) throw err;
-    
+
+    connection.query(`UPDATE ${this.tableName} SET${setters.replace(/,\s*$/, "")} Where ID = ${this.id}`,values)
+      .then(result => {
         this.setClean();
-      }
-    );
+      })
+      .catch(err => {
+        throw err;
+      });
   }
 
   delete() {
-    this.connection.query(
-      `DELETE FROM ${this.tableName} WHERE id = ?`, [this.id], (err, result) => {
-        if (err) throw err;
-      }
-    );
+    connection.query(`DELETE FROM ${this.tableName} WHERE id = ?`, [this.id])
+      .then(result => {
+        return true;
+      })
+      .catch(err => {
+        throw err;
+      });
   }
 }
 
