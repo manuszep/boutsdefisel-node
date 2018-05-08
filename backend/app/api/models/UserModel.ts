@@ -1,8 +1,18 @@
 import Model from "./Model";
 
 class UserModel extends Model {
-  private _username:string;
   protected tableName = "users";
+
+  constructor(data:{ [key: string]: any }) {
+    super();
+
+    if (typeof data !== "undefined") {
+      this.username = data.username;
+      this.email = data.email;
+    }
+  }
+
+  private _username:string;
 
   get username():string {
     return this._username;
@@ -32,7 +42,7 @@ class UserModel extends Model {
   }
 
   create():void {
-    this.connection.query('INSERT INTO users SET ?', this.toKeyValue(), (err, res) => {
+    this.connection.query(`INSERT INTO ${this.tableName} SET ?`, this.toKeyValue(), (err, res) => {
       if(err) throw err;
 
       this.id = res.insertId;
@@ -51,7 +61,7 @@ class UserModel extends Model {
     }
     
     this.connection.query(
-      `UPDATE users SET${setters.replace(/,\s*$/, "")} Where ID = ${this.id}`,
+      `UPDATE ${this.tableName} SET${setters.replace(/,\s*$/, "")} Where ID = ${this.id}`,
       values,
       (err, result) => {
         if (err) throw err;
@@ -63,7 +73,7 @@ class UserModel extends Model {
 
   delete() {
     this.connection.query(
-      'DELETE FROM users WHERE id = ?', [this.id], (err, result) => {
+      `DELETE FROM ${this.tableName} WHERE id = ?`, [this.id], (err, result) => {
         if (err) throw err;
       }
     );
