@@ -21,7 +21,12 @@ export default {
       });
   },
   read_a_user: function(req, res) {
-    res.json({username: "user1"});
+    UserManager.findOne(req.params.id).then(row => {
+      res.json(row);
+    })
+    .catch(err => {
+      res.status(500).json({code: err.code, msg: err.sqlMessage});
+    });
   },
   update_a_user: function(req, res) {
     res.json({username: "user2"});

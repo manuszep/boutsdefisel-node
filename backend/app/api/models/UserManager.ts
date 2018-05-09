@@ -16,6 +16,13 @@ class UserManager extends Manager {
     });
   }
 
+  findOne(id:number) {
+    return this.query(`SELECT * FROM ${this.tableName} WHERE id = ?`, [id], result => {
+      this.data = result;
+      return this.data;
+    });
+  }
+
   hydrateObjects(rows) {
     this.data = [];
     rows.forEach( (row) => {

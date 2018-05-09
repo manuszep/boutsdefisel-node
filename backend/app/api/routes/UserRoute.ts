@@ -7,7 +7,7 @@ export default function (app) {
     .post(UserController.create_a_user);
 
 
-  app.route('/users/:userId')
+  app.route('/users/:id')
     .get(UserController.read_a_user)
     .put(UserController.update_a_user)
     .delete(UserController.delete_a_user);
