@@ -1,4 +1,5 @@
 import Model from "./Model";
+import { ROLE_USER, ROLE_EDITOR, ROLE_ADMIN, ROLE_COCO } from "../../lib/roles";
 
 class UserModel extends Model {
   protected tableName = "users";
@@ -13,7 +14,7 @@ class UserModel extends Model {
   private _lastLogin:Date;
   private _confirmationToken:string;
   private _passwordRequestedAt:Date;
-  private _groups:number[];
+  private _role:string;
   private _createdAt:Date;
   private _updatedAt:Date;
   private _deletedAt:Date;
@@ -22,6 +23,7 @@ class UserModel extends Model {
     super();
 
     this.enabled = false;
+    this.role = ROLE_USER;
 
     this.unserialize(data);
   }
@@ -141,14 +143,14 @@ class UserModel extends Model {
     this._passwordRequestedAt = passwordRequestedAt;
   }
 
-  get groups():number[] {
-    return this._groups;
+  get role():string {
+    return this._role;
   }
 
-  set groups(groups:number[]) {
-    if (groups === this.groups) return;
-    this.setDirty("groups");
-    this._groups = groups;
+  set role(role:string) {
+    if (role === this.role) return;
+    this.setDirty("role");
+    this._role = role;
   }
 
   get createdAt():Date {
@@ -193,7 +195,7 @@ class UserModel extends Model {
       "lastLogin": this.lastLogin,
       "confirmationToken": this.confirmationToken,
       "passwordRequestedAt": this.passwordRequestedAt,
-      "groups": this.groups,
+      "role": this.role,
       "createdAt": this.createdAt,
       "updatedAt": this.updatedAt,
       "deletedAt": this.deletedAt
@@ -213,7 +215,7 @@ class UserModel extends Model {
     "lastLogin"?:Date,
     "confirmationToken"?:string,
     "passwordRequestedAt"?:Date,
-    "groups"?:number[],
+    "role"?:string,
     "createdAt"?:Date,
     "updatedAt"?:Date,
     "deletedAt"?:Date
@@ -231,7 +233,7 @@ class UserModel extends Model {
       this.lastLogin = data.lastLogin;
       this.confirmationToken = data.confirmationToken;
       this.passwordRequestedAt = data.passwordRequestedAt;
-      this.groups = data.groups;
+      this.role = data.role;
       this.createdAt = data.createdAt;
       this.updatedAt = data.updatedAt;
       this.deletedAt = data.deletedAt;
