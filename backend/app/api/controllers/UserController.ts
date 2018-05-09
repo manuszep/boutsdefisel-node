@@ -8,13 +8,15 @@ export default {
     const user = new UserModel();
     user.username = req.body.username;
     user.email = req.body.email;
+    user.phone = req.body.phone;
+    user.mobile = req.body.mobile;
+    user.mobile2 = req.body.mobile2;
 
     user.persist()
       .then(id => {
         res.json(user.serialize());
       })
       .catch(err => {
-        console.log(JSON.stringify({code: err.code, msg: err.sqlMessage}));
         res.status(500).json({code: err.code, msg: err.sqlMessage});
       });
   },

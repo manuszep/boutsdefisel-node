@@ -34,6 +34,12 @@ abstract class Model {
       })
     }
 
+    protected setPersistableValue(name:string, value:any) {
+      if (value === this[name]) return;
+      this.setDirty(name);
+      this[`_${name}`] = value;
+    }
+
     persist():Promise<any> {
       return new Promise((resolve, reject) => {
         if (this._inDb) {

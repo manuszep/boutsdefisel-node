@@ -8,9 +8,10 @@
     "stop": "pm2 stop all",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "dev": "tsc --watch & nodemon dist",
+    "dev": "tsc --watch & nodemon pm2 start dist/index.js --watch",
     "lint": "eslint src --ext ts",
-    "tsc": "tsc"
+    "tsc": "tsc",
+    "logs": "pm2 logs"
   },
   "repository": {
     "type": "git",

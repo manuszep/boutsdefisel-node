@@ -1,5 +1,6 @@
 import Model from "./Model";
 import { ROLE_USER, ROLE_EDITOR, ROLE_ADMIN, ROLE_COCO } from "../../lib/roles";
+import { phoneTransform, phoneReverseTransform } from "../../dataValidation/phoneValidation";
 
 class UserModel extends Model {
   protected tableName = "users";
@@ -8,6 +9,7 @@ class UserModel extends Model {
   private _email:string;
   private _emailCanonical:string;
   private _enabled:boolean;
+  private _locked:boolean;
   private _salt:string;
   private _password:string;
   private _plainPassword:string; // For validation. Do not persist
@@ -15,6 +17,16 @@ class UserModel extends Model {
   private _confirmationToken:string;
   private _passwordRequestedAt:Date;
   private _role:string;
+  private _street:string;
+  private _streetNumber:string;
+  private _streetBox:string;
+  private _city:string;
+  private _zip:number;
+  private _phone:string;
+  private _mobile:string;
+  private _mobile2:string;
+  private _balance:number;
+  private _picture:string;
   private _createdAt:Date;
   private _updatedAt:Date;
   private _deletedAt:Date;
@@ -23,6 +35,7 @@ class UserModel extends Model {
     super();
 
     this.enabled = false;
+    this.locked = false;
     this.role = ROLE_USER;
 
     this.unserialize(data);
@@ -32,173 +45,121 @@ class UserModel extends Model {
     return this.username;
   }
 
-  get username():string {
-    return this._username;
-  }
-
+  get username():string {return this._username;}
   set username(username:string) {
-    if (username === this.username) return;
-    this.setDirty("username");
-    this._username = username;
+    this.setPersistableValue("username", username);
     this.usernameCanonical = username.toLowerCase();
   }
 
-  get usernameCanonical():string {
-    return this._usernameCanonical;
-  }
+  get usernameCanonical():string {return this._usernameCanonical;}
+  set usernameCanonical(usernameCanonical:string) {this.setPersistableValue("usernameCanonical", usernameCanonical);}
 
-  set usernameCanonical(usernameCanonical:string) {
-    if (usernameCanonical === this.usernameCanonical) return;
-    this.setDirty("usernameCanonical");
-    this._usernameCanonical = usernameCanonical;
-  }
-
-  get email():string {
-    return this._email;
-  }
-
+  get email():string {return this._email;}
   set email(email:string) {
-    if (email === this.email) return;
-    this.setDirty("email");
-    this._email = email;
+    this.setPersistableValue("email", email);
     this.emailCanonical = email.toLowerCase();
   }
 
-  get emailCanonical():string {
-    return this._emailCanonical;
-  }
+  get emailCanonical():string {return this._emailCanonical;}
+  set emailCanonical(emailCanonical:string) {this.setPersistableValue("emailCanonical", emailCanonical);}
 
-  set emailCanonical(emailCanonical:string) {
-    if (emailCanonical === this.emailCanonical) return;
-    this.setDirty("emailCanonical");
-    this._emailCanonical = emailCanonical;
-  }
+  get enabled():boolean {return this._enabled;}
+  set enabled(enabled:boolean) {this.setPersistableValue("enabled", enabled);}
 
-  get enabled():boolean {
-    return this._enabled;
-  }
+  get locked():boolean {return this._locked;}
+  set locked(locked:boolean) {this.setPersistableValue("locked", locked);}
 
-  set enabled(enabled:boolean) {
-    if (enabled === this.enabled) return;
-    this.setDirty("enabled");
-    this._enabled = enabled;
-  }
+  get salt():string {return this._salt;}
+  set salt(salt:string) {this.setPersistableValue("salt", salt);}
 
-  get salt():string {
-    return this._salt;
-  }
+  get password():string {return this._password;}
+  set password(password:string) {this.setPersistableValue("password", password);}
 
-  set salt(salt:string) {
-    if (salt === this.salt) return;
-    this.setDirty("salt");
-    this._salt = salt;
-  }
-
-  get password():string {
-    return this._password;
-  }
-
-  set password(password:string) {
-    if (password === this.password) return;
-    this.setDirty("password");
-    this._password = password;
-  }
-
-  get plainPassword():string {
-    return this._plainPassword;
-  }
-
+  get plainPassword():string {return this._plainPassword;}
   set plainPassword(plainPassword:string) {
     if (plainPassword === this.plainPassword) return;
     this._plainPassword = plainPassword;
   }
 
-  get lastLogin():Date {
-    return this._lastLogin;
-  }
+  get lastLogin():Date {return this._lastLogin;}
+  set lastLogin(lastLogin:Date) {this.setPersistableValue("lastLogin", lastLogin);}
 
-  set lastLogin(lastLogin:Date) {
-    if (lastLogin === this.lastLogin) return;
-    this.setDirty("lastLogin");
-    this._lastLogin = lastLogin;
-  }
+  get confirmationToken():string {return this._confirmationToken;}
+  set confirmationToken(confirmationToken:string) {this.setPersistableValue("confirmationToken", confirmationToken);}
 
-  get confirmationToken():string {
-    return this._confirmationToken;
-  }
+  get passwordRequestedAt():Date {return this._passwordRequestedAt ;}
+  set passwordRequestedAt(passwordRequestedAt:Date) {this.setPersistableValue("passwordRequestedAt", passwordRequestedAt);}
 
-  set confirmationToken(confirmationToken:string) {
-    if (confirmationToken === this.confirmationToken) return;
-    this.setDirty("confirmationToken");
-    this._confirmationToken = confirmationToken;
-  }
+  get role():string {return this._role;}
+  set role(role:string) {this.setPersistableValue("role", role);}
 
-  get passwordRequestedAt():Date {
-    return this._passwordRequestedAt ;
-  }
+  get street():string {return this._street;}
+  set street(street:string) {this.setPersistableValue("street", street);}
 
-  set passwordRequestedAt(passwordRequestedAt:Date) {
-    if (passwordRequestedAt === this.passwordRequestedAt) return;
-    this.setDirty("passwordRequestedAt");
-    this._passwordRequestedAt = passwordRequestedAt;
-  }
+  get streetNumber():string {return this._streetNumber;}
+  set streetNumber(streetNumber:string) {this.setPersistableValue("streetNumber", streetNumber);}
 
-  get role():string {
-    return this._role;
-  }
+  get streetBox():string {return this._streetBox;}
+  set streetBox(streetBox:string) {this.setPersistableValue("streetBox", streetBox);}
 
-  set role(role:string) {
-    if (role === this.role) return;
-    this.setDirty("role");
-    this._role = role;
-  }
+  get city():string {return this._city;}
+  set city(city:string) {this.setPersistableValue("city", city);}
 
-  get createdAt():Date {
-    return this._createdAt;
-  }
+  get zip():number {return this._zip;}
+  set zip(zip:number) {this.setPersistableValue("zip", zip);}
 
-  set createdAt(createdAt:Date) {
-    if (createdAt === this.createdAt) return;
-    this._createdAt = createdAt;
-  }
+  get phone():string {return phoneTransform(this._phone);}
+  set phone(phone:string) {this.setPersistableValue("phone", phoneReverseTransform(phone));}
 
-  get updatedAt():Date {
-    return this._updatedAt;
-  }
+  get mobile():string {return phoneTransform(this._mobile);}
+  set mobile(mobile:string) {this.setPersistableValue("mobile", phoneReverseTransform(mobile));}
 
-  set updatedAt(updatedAt:Date) {
-    if (updatedAt === this.updatedAt) return;
-    this.setDirty("updatedAt");
-    this._updatedAt = updatedAt;
-  }
+  get mobile2():string {return phoneTransform(this._mobile2);}
+  set mobile2(mobile2:string) {this.setPersistableValue("mobile2", phoneReverseTransform(mobile2));}
 
-  get deletedAt():Date {
-    return this._deletedAt;
-  }
+  get balance():number {return this._balance;}
+  set balance(balance:number) {this.setPersistableValue("balance", balance);}
 
-  set deletedAt(deletedAt:Date) {
-    if (deletedAt === this.deletedAt) return;
-    this.setDirty("deletedAt")
-    this._deletedAt = deletedAt;
-  }
+  get picture():string {return this._picture;}
+  set picture(picture:string) {this.setPersistableValue("picture", picture);}
+
+  get createdAt():Date {return this._createdAt;}
+  set createdAt(createdAt:Date) {this.setPersistableValue("createdAt", createdAt);}
+
+  get updatedAt():Date {return this._updatedAt;}
+  set updatedAt(updatedAt:Date) {this.setPersistableValue("updatedAt", updatedAt);}
+
+  get deletedAt():Date {return this._deletedAt;}
+  set deletedAt(deletedAt:Date) {this.setPersistableValue("deletedAt", deletedAt);}
 
   serialize() {
     return {
-      "id": this.id,
-      "username": this.username,
-      "usernameCanonical": this.usernameCanonical,
-      "email": this.email,
-      "emailCanonical": this.emailCanonical,
-      "enabled": this.enabled,
-      "salt": this.salt,
-      "password": this.password,
-      "lastLogin": this.lastLogin,
-      "confirmationToken": this.confirmationToken,
-      "passwordRequestedAt": this.passwordRequestedAt,
-      "role": this.role,
-      "createdAt": this.createdAt,
-      "updatedAt": this.updatedAt,
-      "deletedAt": this.deletedAt
+      "id": this._id,
+      "username": this._username,
+      "usernameCanonical": this._usernameCanonical,
+      "email": this._email,
+      "emailCanonical": this._emailCanonical,
+      "enabled": this._enabled,
+      "locked": this._locked,
+      "salt": this._salt,
+      "password": this._password,
+      "lastLogin": this._lastLogin,
+      "confirmationToken": this._confirmationToken,
+      "passwordRequestedAt": this._passwordRequestedAt,
+      "role": this._role,
+      "street": this._street,
+      "streetNumber": this._streetNumber,
+      "streetBox": this._streetBox,
+      "city": this._city,
+      "zip": this._zip,
+      "phone": this._phone,
+      "mobile": this._mobile,
+      "mobile2": this._mobile2,
+      "balance": this._balance,
+      "picture": this._picture,
+      "createdAt": this._createdAt,
+      "updatedAt": this._updatedAt,
+      "deletedAt": this._deletedAt
     }
   }
 
@@ -209,6 +170,7 @@ class UserModel extends Model {
     "email"?:string,
     "emailCanonical"?:string,
     "enabled"?:boolean,
+    "locked"?:boolean,
     "salt"?:string,
     "password"?:string,
     "plainPassword"?:string,
@@ -216,6 +178,16 @@ class UserModel extends Model {
     "confirmationToken"?:string,
     "passwordRequestedAt"?:Date,
     "role"?:string,
+    "street"?:string,
+    "streetNumber"?:string,
+    "streetBox"?:string,
+    "city"?:string,
+    "zip"?:number,
+    "phone"?:string,
+    "mobile"?:string,
+    "mobile2"?:string,
+    "balance"?:number,
+    "picture"?:string,
     "createdAt"?:Date,
     "updatedAt"?:Date,
     "deletedAt"?:Date
@@ -227,6 +199,7 @@ class UserModel extends Model {
       this.email = data.email;
       this.emailCanonical = data.emailCanonical;
       this.enabled = data.enabled;
+      this.locked = data.locked;
       this.salt = data.salt;
       this.password = data.password;
       this.plainPassword = data.plainPassword;
@@ -234,6 +207,16 @@ class UserModel extends Model {
       this.confirmationToken = data.confirmationToken;
       this.passwordRequestedAt = data.passwordRequestedAt;
       this.role = data.role;
+      this.street = data.street;
+      this.streetNumber = data.streetNumber;
+      this.streetBox = data.streetBox;
+      this.city = data.city;
+      this.zip = data.zip;
+      this.phone = data.phone;
+      this.mobile = data.mobile;
+      this.mobile2 = data.mobile2;
+      this.balance = data.balance;
+      this.picture = data.picture;
       this.createdAt = data.createdAt;
       this.updatedAt = data.updatedAt;
       this.deletedAt = data.deletedAt;
