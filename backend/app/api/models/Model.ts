@@ -1,4 +1,4 @@
-import connection from "../../lib/db";
+import db from "../../lib/db";
 
 abstract class Model {
     protected tableName;
@@ -24,7 +24,7 @@ abstract class Model {
 
     protected query(query, data, success):Promise<any> {
       return new Promise ((resolve, reject) => {
-        connection.query(query, data)
+        db.query(query, data)
           .then(result => {
             resolve(success(result));
           })
