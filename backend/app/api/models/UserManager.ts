@@ -1,15 +1,17 @@
-import connection from "../../lib/db";
+import Manager from "./Manager";
 import UserModel from "./UserModel";
 
-class UserManager {
-  private connection = connection;
-  private tableName = "users";
+class UserManager extends Manager {
+  protected tableName = "users";
   private data;
 
+  getModel(data?:{ [key: string]: any }):UserModel {
+    return new UserModel(data);
+  }
+
   findAll() {
-    this.connection.query(`SELECT * FROM ${this.tableName}`, (err,rows) => {
-      if(err) throw err;
-      this.data = rows;
+    return this.query(`SELECT * FROM ${this.tableName}`, null, result => {
+      this.data = result;
       return this.data;
     });
   }
@@ -22,4 +24,4 @@ class UserManager {
   }
 }
 
-export default UserManager;
+export default new UserManager();

@@ -1,11 +1,17 @@
-import UserModel from "../models/UserModel";
+import UserManager from "../models/UserManager";
 
 export default {
   list_all_users: function(req, res) {
-    res.json([{username: "user1"}, {username: "user2"}, {username: "user3"}]);
+    UserManager.findAll().then(rows => {
+      console.log(rows.length, rows);
+      res.json(rows);
+    })
+    .catch(err => {
+      res.status(500).json({code: err.code, msg: err.sqlMessage});
+    });
   },
   create_a_user: async function(req, res, next) {
-    const user = new UserModel(req.body);
+    const user = UserManager.getModel(req.body);
 
     user.persist()
       .then(id => {
