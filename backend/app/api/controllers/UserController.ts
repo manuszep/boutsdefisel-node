@@ -14,7 +14,8 @@ export default {
         res.json(user.serialize());
       })
       .catch(err => {
-        next(err.code);
+        console.log(JSON.stringify({code: err.code, msg: err.sqlMessage}));
+        res.status(500).json({code: err.code, msg: err.sqlMessage});
       });
   },
   read_a_user: function(req, res) {

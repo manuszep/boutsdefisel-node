@@ -34,7 +34,6 @@ abstract class Model {
       })
     }
 
-
     persist():Promise<any> {
       return new Promise((resolve, reject) => {
         if (this._inDb) {
@@ -49,7 +48,6 @@ abstract class Model {
           });
         }
       });
-
     }
 
     abstract serialize():{ [s: string]: any; };
