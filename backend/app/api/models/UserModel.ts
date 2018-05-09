@@ -34,9 +34,9 @@ class UserModel extends Model {
   constructor(data?:{ [key: string]: any }) {
     super();
 
-    this.enabled = false;
-    this.locked = false;
-    this.role = ROLE_USER;
+    this._enabled = false;
+    this._locked = false;
+    this._role = ROLE_USER;
 
     this.unserialize(data);
   }
@@ -91,7 +91,7 @@ class UserModel extends Model {
   set passwordRequestedAt(passwordRequestedAt:Date) {this.setPersistableValue("passwordRequestedAt", passwordRequestedAt);}
 
   get role():string {return this._role;}
-  set role(role:string) {this.setPersistableValue("role", role);}
+  set role(role:string) {this.setPersistableValue("role", (typeof role !== "undefined") ? role : ROLE_USER);}
 
   get street():string {return this._street;}
   set street(street:string) {this.setPersistableValue("street", street);}
@@ -193,33 +193,33 @@ class UserModel extends Model {
     "deletedAt"?:Date
   }) {
     if (typeof data === "undefined") return;
-      this.id = data.id;
-      this.username = data.username;
-      this.usernameCanonical = data.usernameCanonical;
-      this.email = data.email;
-      this.emailCanonical = data.emailCanonical;
-      this.enabled = data.enabled;
-      this.locked = data.locked;
-      this.salt = data.salt;
-      this.password = data.password;
-      this.plainPassword = data.plainPassword;
-      this.lastLogin = data.lastLogin;
-      this.confirmationToken = data.confirmationToken;
-      this.passwordRequestedAt = data.passwordRequestedAt;
-      this.role = data.role;
-      this.street = data.street;
-      this.streetNumber = data.streetNumber;
-      this.streetBox = data.streetBox;
-      this.city = data.city;
-      this.zip = data.zip;
-      this.phone = data.phone;
-      this.mobile = data.mobile;
-      this.mobile2 = data.mobile2;
-      this.balance = data.balance;
-      this.picture = data.picture;
-      this.createdAt = data.createdAt;
-      this.updatedAt = data.updatedAt;
-      this.deletedAt = data.deletedAt;
+    this.id = data.id;
+    this.username = data.username;
+    this.usernameCanonical = data.usernameCanonical;
+    this.email = data.email;
+    this.emailCanonical = data.emailCanonical;
+    this.enabled = data.enabled;
+    this.locked = data.locked;
+    this.salt = data.salt;
+    this.password = data.password;
+    this.plainPassword = data.plainPassword;
+    this.lastLogin = data.lastLogin;
+    this.confirmationToken = data.confirmationToken;
+    this.passwordRequestedAt = data.passwordRequestedAt;
+    this.role = data.role;
+    this.street = data.street;
+    this.streetNumber = data.streetNumber;
+    this.streetBox = data.streetBox;
+    this.city = data.city;
+    this.zip = data.zip;
+    this.phone = data.phone;
+    this.mobile = data.mobile;
+    this.mobile2 = data.mobile2;
+    this.balance = data.balance;
+    this.picture = data.picture;
+    this.createdAt = data.createdAt;
+    this.updatedAt = data.updatedAt;
+    this.deletedAt = data.deletedAt;
   }
 
   create():Promise<number> {

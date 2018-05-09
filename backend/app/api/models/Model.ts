@@ -35,6 +35,7 @@ abstract class Model {
     }
 
     protected setPersistableValue(name:string, value:any) {
+      if (typeof value === "undefined") return;
       if (value === this[name]) return;
       this.setDirty(name);
       this[`_${name}`] = value;

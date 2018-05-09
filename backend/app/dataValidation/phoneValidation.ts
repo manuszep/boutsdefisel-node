@@ -38,7 +38,6 @@ export const phoneReverseTransform = (phone:string):string => {
     p = `+32${p}`;
   }
 
-  console.log(p);
   return p;
 }
 

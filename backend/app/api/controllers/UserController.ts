@@ -5,12 +5,7 @@ export default {
     res.json([{username: "user1"}, {username: "user2"}, {username: "user3"}]);
   },
   create_a_user: async function(req, res, next) {
-    const user = new UserModel();
-    user.username = req.body.username;
-    user.email = req.body.email;
-    user.phone = req.body.phone;
-    user.mobile = req.body.mobile;
-    user.mobile2 = req.body.mobile2;
+    const user = new UserModel(req.body);
 
     user.persist()
       .then(id => {
