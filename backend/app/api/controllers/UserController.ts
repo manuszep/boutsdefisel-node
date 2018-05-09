@@ -3,7 +3,6 @@ import UserManager from "../models/UserManager";
 export default {
   list_all_users: function(req, res) {
     UserManager.findAll().then(rows => {
-      console.log(rows.length, rows);
       res.json(rows);
     })
     .catch(err => {
