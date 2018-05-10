@@ -6,7 +6,7 @@ export default {
       res.json(rows);
     })
     .catch(err => {
-      res.status(500).json({code: err.code, msg: err.sqlMessage});
+      res.status(500).json(err);
     });
   },
   create_a_user: async function(req, res, next) {
@@ -17,7 +17,7 @@ export default {
         res.json(user.serialize());
       })
       .catch(err => {
-        res.status(500).json({code: err.code, msg: err.sqlMessage});
+        res.status(500).json(err);
       });
   },
   read_a_user: function(req, res) {
@@ -25,7 +25,7 @@ export default {
       res.json(row);
     })
     .catch(err => {
-      res.status(500).json({code: err.code, msg: err.sqlMessage});
+      res.status(500).json(err);
     });
   },
   update_a_user: function(req, res) {
@@ -38,7 +38,7 @@ export default {
       res.json(result);
     })
     .catch(err => {
-      res.status(500).json({code: err.code, msg: err.sqlMessage});
+      res.status(500).json(err);
     });
   },
   delete_a_user: function(req, res) {
