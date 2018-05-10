@@ -33,7 +33,6 @@ class UserModel extends Model {
 
   constructor(data?:{ [key: string]: any }) {
     super();
-
     this._enabled = false;
     this._locked = false;
     this._role = ROLE_USER;
@@ -47,7 +46,7 @@ class UserModel extends Model {
 
   get username():string {return this._username;}
   set username(username:string) {
-    this.setPersistableValue("username", username);
+    if (!this.setPersistableValue("username", username)) return;
     this.usernameCanonical = username.toLowerCase();
   }
 
@@ -56,7 +55,7 @@ class UserModel extends Model {
 
   get email():string {return this._email;}
   set email(email:string) {
-    this.setPersistableValue("email", email);
+    if (!this.setPersistableValue("email", email)) return;
     this.emailCanonical = email.toLowerCase();
   }
 
@@ -228,33 +227,36 @@ class UserModel extends Model {
 
     return this.query(
       `INSERT INTO ${this.tableName} SET ?`,
-      this.serialize(),
-      result => {
+      this.serialize())
+      .then(result => {
         this.id = result.insertId;
-        this.setClean();
         return this.id;
-    });
+      });
   }
 
-  update() {
-    this.updatedAt = new Date();
+  update():Promise<any> {
     let setters = "";
     let values = [];
 
     for (let key in this._dirty) {
       let value = this._dirty[key];
       setters += ` ${key} = ?,`;
-      values.push(this[key]);
+      values.push(this[`_${key}`]);
     }
 
+    if (!values.length) throw {code: "NO_CHANGES"};
+
+    this.updatedAt = new Date();
+
+    setters += ` updatedAt = ?,`;
+    values.push(new Date());
+
     return this.query(
-      `UPDATE ${this.tableName} SET${setters.replace(/,\s*$/, "")} Where ID = ${this.id}`,
-      values,
-      result => {
-        this.id = result.insertId;
-        this.setClean();
-        return this.id;
-    });
+      `UPDATE ${this.tableName} SET${setters.replace(/,\s*$/, "")} WHERE id = ${this.id}`,
+      values)
+      .then(result => {
+        return (result);
+      });
   }
 
   delete() {
@@ -262,10 +264,7 @@ class UserModel extends Model {
 
     return this.query(
       `UPDATE ${this.tableName} SET deletedAt Where ID = ${this.id}`,
-      this.deletedAt,
-      result => {
-        return true;
-    });
+      this.deletedAt);
   }
 }
 

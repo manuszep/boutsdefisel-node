@@ -5,7 +5,7 @@ export const PHONE_FIXED = "PHONE_FIXED";
 export const PHONE_MOBILE = "PHONE_MOBILE";
 
 export const validatePhone = (phone:string):boolean => {
-  if (typeof phone === "undefined") return;
+  if (typeof phone === "undefined" || phone === null) return;
   const p = phoneReverseTransform(phone);
 
   if (p === "") return true;
@@ -21,7 +21,7 @@ export const getPhoneType = (phone:string):string => {
 }
 
 export const phoneReverseTransform = (phone:string):string => {
-  if (typeof phone === "undefined") return;
+  if (typeof phone === "undefined" || phone === null) return;
   if (!phone.length) return phone;
 
   let p:string;
@@ -42,7 +42,7 @@ export const phoneReverseTransform = (phone:string):string => {
 }
 
 export const phoneTransform = (phone:string):string => {
-  if (typeof phone === "undefined") return;
+  if (typeof phone === "undefined" || phone === null) return;
   let p = phone.trim();
   const type = getPhoneType(p);
   const patterns = {

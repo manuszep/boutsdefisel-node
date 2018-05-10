@@ -16,10 +16,12 @@ class UserManager extends Manager {
     });
   }
 
-  findOne(id:number) {
+  findOne(id:number):Promise<UserModel> {
     return this.query(`SELECT * FROM ${this.tableName} WHERE id = ?`, [id], result => {
       this.data = result;
-      return this.data;
+      const user = new UserModel(this.data[0]);
+      user.setClean();
+      return user;
     });
   }
 

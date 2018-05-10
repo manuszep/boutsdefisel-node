@@ -29,7 +29,17 @@ export default {
     });
   },
   update_a_user: function(req, res) {
-    res.json({username: "user2"});
+    UserManager.findOne(req.params.id)
+    .then(user => {
+      user.unserialize(req.body);
+      return user.persist();
+    })
+    .then(result => {
+      res.json(result);
+    })
+    .catch(err => {
+      res.status(500).json({code: err.code, msg: err.sqlMessage});
+    });
   },
   delete_a_user: function(req, res) {
     res.json({ message: 'User successfully deleted' });
