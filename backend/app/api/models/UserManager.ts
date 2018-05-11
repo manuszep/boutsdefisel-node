@@ -1,40 +1,75 @@
 import Manager from "./Manager";
 import UserModel from "./UserModel";
 
+/**
+ * UserManager provides helpers to access model and database
+ *
+ * @extends Manager
+ */
 class UserManager extends Manager {
+  // Database table name
   protected tableName = "users";
+  // Stores data from last query
   private data;
 
+  /**
+   * Provide a UserModel
+   *
+   * @param data {}
+   * @returns UserModel
+   */
   getModel(data?:{ [key: string]: any }):UserModel {
     return new UserModel(data);
   }
 
-  findAll() {
+  /**
+   * Fetch all users from database
+   *
+   * @returns Promise<{}[]>
+   */
+  findAll():Promise<{}[]> {
     return this.query(`SELECT * FROM ${this.tableName}`, null, result => {
       this.data = result;
       return this.data;
     });
   }
 
+  /**
+   * Find a user from database based on ID then hydrate as object
+   *
+   * @param id number
+   * @returns Promise<UserModel>
+   */
   findOne(id:number):Promise<UserModel> {
     return this.query(`SELECT * FROM ${this.tableName} WHERE id = ?`, [id], result => {
       this.data = result;
 
+      // If there's no result, throw a NOT_FOUND
       if (!result.length) {
         throw {code: "NOT_FOUND"};
       }
 
+      // Hydrate model
       const user = new UserModel(this.data[0]);
+      // Set model as clean since all values are dirty after hydration
       user.setClean();
       return user;
     });
   }
 
-  hydrateObjects(rows) {
+  /**
+   * Loop over mySQL rows and hydrate as UserModel
+   *
+   * @param rows {}][] list of mySQL rows
+   * @returns UserModel[]
+   */
+  hydrateObjects(rows:{}[]):UserModel[] {
     this.data = [];
     rows.forEach( (row) => {
       this.data.push(new UserModel(row));
-  });
+    });
+
+    return this.data;
   }
 }
 
