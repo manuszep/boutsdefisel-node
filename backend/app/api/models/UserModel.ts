@@ -1,10 +1,9 @@
 import security from '../../config/security';
 import Model from './Model';
-import { ROLE_USER, ROLE_EDITOR, ROLE_ADMIN, ROLE_COCO } from '../../lib/roles';
+import { ROLE_USER } from '../../lib/roles';
 import { phoneTransform, phoneReverseTransform } from '../../dataValidation/phoneValidation';
 
 import jwt = require('jsonwebtoken');
-
 /**
  * UserModel
  *
@@ -362,7 +361,7 @@ class UserModel extends Model {
    * @returns string
    */
   authenticate ():string {
-    const payload = { id: this._id };
+    const payload = { id: this._id, role: this.role };
     const token = jwt.sign(payload, security.secret, { expiresIn: '1d' });
 
     return token;
