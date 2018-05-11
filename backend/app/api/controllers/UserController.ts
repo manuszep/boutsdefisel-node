@@ -1,7 +1,7 @@
 import UserManager from "../models/UserManager";
 
 export default {
-  list_all_users: function(req, res) {
+  list_all_users: (req, res) => {
     UserManager.findAll().then(rows => {
       res.json(rows);
     })
@@ -9,7 +9,7 @@ export default {
       res.status(500).json(err);
     });
   },
-  create_a_user: async function(req, res, next) {
+  create_a_user: (req, res) => {
     const user = UserManager.getModel(req.body);
 
     user.persist()
@@ -20,7 +20,7 @@ export default {
         res.status(500).json(err);
       });
   },
-  read_a_user: function(req, res) {
+  read_a_user: (req, res) => {
     UserManager.findOne(req.params.id).then(row => {
       res.json(row);
     })
@@ -28,7 +28,7 @@ export default {
       res.status(500).json(err);
     });
   },
-  update_a_user: function(req, res) {
+  update_a_user: (req, res) => {
     UserManager.findOne(req.params.id)
     .then(user => {
       user.unserialize(req.body);
@@ -41,7 +41,7 @@ export default {
       res.status(500).json(err);
     });
   },
-  delete_a_user: function(req, res) {
+  delete_a_user: (req, res) => {
     UserManager.findOne(req.params.id)
     .then(user => {
       return user.delete();
