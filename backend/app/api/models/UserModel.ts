@@ -255,16 +255,20 @@ class UserModel extends Model {
       `UPDATE ${this.tableName} SET${setters.replace(/,\s*$/, "")} WHERE id = ${this.id}`,
       values)
       .then(result => {
-        return (result);
+        return result;
       });
   }
 
   delete() {
+    if (typeof this.deletedAt !== "undefined" && this.deletedAt !== null) throw {code: "ALREADY_DELETED"};
     this.deletedAt = new Date();
 
     return this.query(
-      `UPDATE ${this.tableName} SET deletedAt Where ID = ${this.id}`,
-      this.deletedAt);
+      `UPDATE ${this.tableName} SET deletedAt = ? Where ID = ${this.id}`,
+      this.deletedAt)
+      .then(result => {
+        return result;
+      });;
   }
 }
 

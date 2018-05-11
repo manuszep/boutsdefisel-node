@@ -42,6 +42,15 @@ export default {
     });
   },
   delete_a_user: function(req, res) {
-    res.json({ message: 'User successfully deleted' });
+    UserManager.findOne(req.params.id)
+    .then(user => {
+      return user.delete();
+    })
+    .then(result => {
+      res.json(result);
+    })
+    .catch(err => {
+      res.status(500).json(err);
+    });
   }
 };

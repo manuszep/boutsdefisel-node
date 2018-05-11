@@ -19,6 +19,11 @@ class UserManager extends Manager {
   findOne(id:number):Promise<UserModel> {
     return this.query(`SELECT * FROM ${this.tableName} WHERE id = ?`, [id], result => {
       this.data = result;
+
+      if (!result.length) {
+        throw {code: "NOT_FOUND"};
+      }
+
       const user = new UserModel(this.data[0]);
       user.setClean();
       return user;
