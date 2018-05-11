@@ -11,4 +11,7 @@ export default function (app) {
     .get(UserController.read_a_user)
     .put(UserController.update_a_user)
     .delete(UserController.delete_a_user);
+
+  app.route('/authenticate')
+    .post(UserController.authenticate);
 }

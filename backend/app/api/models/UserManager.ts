@@ -60,6 +60,31 @@ class UserManager extends Manager {
   }
 
   /**
+   * Find a user from database based on username then hydrate as object
+   *
+   * @param username string
+   * @returns Promise<UserModel>
+   */
+  findOneByUsername(username:string):Promise<UserModel> {
+    const user = new UserModel({username: username});
+    return this.query(`SELECT * FROM ${this.tableName} WHERE usernameCanonical = ?`, [user.usernameCanonical])
+      .then(result => {
+        this.data = result;
+
+        // If there's no result, throw a NOT_FOUND
+        if (!result.length) {
+          throw {code: "NOT_FOUND"};
+        }
+
+        // Hydrate model
+        user.unserialize(this.data[0]);
+        // Set model as clean since all values are dirty after hydration
+        user.setClean();
+        return user;
+      });
+  }
+
+  /**
    * Loop over mySQL rows and hydrate as UserModel
    *
    * @param rows {}][] list of mySQL rows

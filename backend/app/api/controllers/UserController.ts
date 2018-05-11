@@ -52,5 +52,19 @@ export default {
     .catch(err => {
       res.status(500).json(err);
     });
+  },
+  authenticate: (req, res) => {
+    UserManager.findOneByUsername(req.body.username)
+    .then(user => {
+      user.password = req.body.password;
+      const token = user.authenticate();
+      res.json({
+        success: true,
+        token: token
+      });
+    })
+    .catch(err => {
+      res.status(500).json(err);
+    });
   }
 };
