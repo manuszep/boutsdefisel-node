@@ -1,4 +1,4 @@
-import db from "../../lib/db";
+import db from '../../lib/db';
 
 /**
  * Manager
@@ -17,16 +17,16 @@ abstract class Manager {
    *
    * @returns Promise<any>
    */
-  protected query(query, data):Promise<any> {
-    return new Promise ((resolve, reject) => {
+  protected query (query, data):Promise<any> {
+    return new Promise((resolve, reject) => {
       db.query(query, data)
         .then(result => {
           resolve(result);
         })
         .catch(err => {
-          reject(err)
+          reject(err);
         });
-    })
+    });
   }
 }
 

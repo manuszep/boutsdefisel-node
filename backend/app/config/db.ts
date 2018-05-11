@@ -4,4 +4,4 @@ export default {
   password: 'boutsdefisel',
   database: 'boutsdefisel',
   charset: 'utf8'
-}
+};
