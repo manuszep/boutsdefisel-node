@@ -2,8 +2,15 @@ import Model from "./Model";
 import { ROLE_USER, ROLE_EDITOR, ROLE_ADMIN, ROLE_COCO } from "../../lib/roles";
 import { phoneTransform, phoneReverseTransform } from "../../dataValidation/phoneValidation";
 
+/**
+ * UserModel
+ *
+ * @extends Model
+ */
 class UserModel extends Model {
+  // Name of the database table
   protected tableName = "users";
+  // List all database columns
   private _username:string;
   private _usernameCanonical:string;
   private _email:string;
@@ -31,6 +38,11 @@ class UserModel extends Model {
   private _updatedAt:Date;
   private _deletedAt:Date;
 
+  /**
+   * Initialize object
+   *
+   * @param data {} Map of key-values to initialize entity
+   */
   constructor(data?:{ [key: string]: any }) {
     super();
     this._enabled = false;
@@ -40,11 +52,12 @@ class UserModel extends Model {
     this.unserialize(data);
   }
 
-  toString():string {
-    return this.username;
-  }
-
   get username():string {return this._username;}
+  /**
+   * Sets the username and the usernameCanonical values
+   *
+   * @param username string
+   */
   set username(username:string) {
     if (!this.setPersistableValue("username", username)) return;
     this.usernameCanonical = username.toLowerCase();
@@ -54,6 +67,11 @@ class UserModel extends Model {
   set usernameCanonical(usernameCanonical:string) {this.setPersistableValue("usernameCanonical", usernameCanonical);}
 
   get email():string {return this._email;}
+  /**
+   * Sets the email and the emailCanonical values
+   *
+   * @param email string
+   */
   set email(email:string) {
     if (!this.setPersistableValue("email", email)) return;
     this.emailCanonical = email.toLowerCase();
@@ -90,6 +108,11 @@ class UserModel extends Model {
   set passwordRequestedAt(passwordRequestedAt:Date) {this.setPersistableValue("passwordRequestedAt", passwordRequestedAt);}
 
   get role():string {return this._role;}
+  /**
+   * Sets the role with a default value if undefined
+   *
+   * @param role string
+   */
   set role(role:string) {this.setPersistableValue("role", (typeof role !== "undefined") ? role : ROLE_USER);}
 
   get street():string {return this._street;}
@@ -107,13 +130,43 @@ class UserModel extends Model {
   get zip():number {return this._zip;}
   set zip(zip:number) {this.setPersistableValue("zip", zip);}
 
+  /**
+   * Get the formatted phone value
+   *
+   * @returns string
+   */
   get phone():string {return phoneTransform(this._phone);}
+  /**
+   * Sets the phone value after formatting for database
+   *
+   * @param phone string
+   */
   set phone(phone:string) {this.setPersistableValue("phone", phoneReverseTransform(phone));}
 
+  /**
+   * Get the formatted mobile value
+   *
+   * @returns string
+   */
   get mobile():string {return phoneTransform(this._mobile);}
+  /**
+   * Sets the mobile value after formatting for database
+   *
+   * @param mobile string
+   */
   set mobile(mobile:string) {this.setPersistableValue("mobile", phoneReverseTransform(mobile));}
 
+  /**
+   * Get the formatted mobile2 value
+   *
+   * @returns string
+   */
   get mobile2():string {return phoneTransform(this._mobile2);}
+  /**
+   * Sets the mobile2 value after formatting for database
+   *
+   * @param mobile2 string
+   */
   set mobile2(mobile2:string) {this.setPersistableValue("mobile2", phoneReverseTransform(mobile2));}
 
   get balance():number {return this._balance;}
@@ -131,7 +184,12 @@ class UserModel extends Model {
   get deletedAt():Date {return this._deletedAt;}
   set deletedAt(deletedAt:Date) {this.setPersistableValue("deletedAt", deletedAt);}
 
-  serialize() {
+  /**
+   * Returns the serialized representation of a User
+   *
+   * @returns {} of key-values
+   */
+  serialize():{} {
     return {
       "id": this._id,
       "username": this._username,
@@ -162,6 +220,12 @@ class UserModel extends Model {
     }
   }
 
+  /**
+   * Turns a serialized representation into an actual User
+   *
+   * @param data object An {} of key-values
+   * @returns any The entity object
+   */
   unserialize(data:{
     "id"?:number,
     "username"?:string,
@@ -190,7 +254,7 @@ class UserModel extends Model {
     "createdAt"?:Date,
     "updatedAt"?:Date,
     "deletedAt"?:Date
-  }) {
+  }):void {
     if (typeof data === "undefined") return;
     this.id = data.id;
     this.username = data.username;
@@ -221,6 +285,11 @@ class UserModel extends Model {
     this.deletedAt = data.deletedAt;
   }
 
+  /**
+   * Adds a user to the database
+   *
+   * @returns Promise<number> the insert id
+   */
   create():Promise<number> {
     this.createdAt = new Date();
     this.updatedAt = new Date();
@@ -234,23 +303,33 @@ class UserModel extends Model {
       });
   }
 
+  /**
+   * Updates a user in the database
+   *
+   * @returns Promise<any> mySql response
+   */
   update():Promise<any> {
     let setters = "";
     let values = [];
 
+    // Loop over dirty properies to generate setter string and values array
     for (let key in this._dirty) {
       let value = this._dirty[key];
       setters += ` ${key} = ?,`;
       values.push(this[`_${key}`]);
     }
 
+    // If values is empty, no change is required throw error
     if (!values.length) throw {code: "NO_CHANGES"};
 
+    // Update the updatedAt column
     this.updatedAt = new Date();
 
+    // ... And add to setters list and values
     setters += ` updatedAt = ?,`;
     values.push(new Date());
 
+    // Run the query. The setters.replace is used to trim commas
     return this.query(
       `UPDATE ${this.tableName} SET${setters.replace(/,\s*$/, "")} WHERE id = ${this.id}`,
       values)
@@ -259,7 +338,13 @@ class UserModel extends Model {
       });
   }
 
-  delete() {
+  /**
+   * Deletes a User from the database. Actually, it just sets the deletedAt value
+   *
+   * @returns Promise<any> mySql response
+   */
+  delete():Promise<any> {
+    // If the User is already deleted, throw error
     if (typeof this.deletedAt !== "undefined" && this.deletedAt !== null) throw {code: "ALREADY_DELETED"};
     this.deletedAt = new Date();
 

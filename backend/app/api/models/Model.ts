@@ -49,7 +49,7 @@ abstract class Model {
    *
    * @returns Promise<any>
    */
-  protected query(query:string, data:Array<any>):Promise<any> {
+  protected query(query:string, data:Array<any>|{}):Promise<any> {
     return new Promise ((resolve, reject) => {
       db.query(query, data)
         .then(result => {
@@ -139,7 +139,7 @@ abstract class Model {
    *
    * @returns Promise<any> mySql response
    */
-  abstract create():Promise<any>;
+  abstract delete():Promise<any>;
 }
 
 export default Model;
