@@ -1,19 +1,13 @@
 import db from "../../lib/db";
 
+/**
+ * Manager
+ *
+ * Define basic manager structure and common methods
+ */
 abstract class Manager {
+  // Database table name
   protected tableName;
-
-  protected query(query, data, success):Promise<any> {
-    return new Promise ((resolve, reject) => {
-      db.query(query, data)
-        .then(result => {
-          resolve(success(result));
-        })
-        .catch(err => {
-          reject(err)
-        });
-    })
-  }
 }
 
 export default Manager;
