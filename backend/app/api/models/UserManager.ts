@@ -28,7 +28,8 @@ class UserManager extends Manager {
    * @returns Promise<{}[]>
    */
   findAll():Promise<{}[]> {
-    return this.query(`SELECT * FROM ${this.tableName}`, null, result => {
+    return this.query(`SELECT * FROM ${this.tableName}`, null)
+    .then(result => {
       this.data = result;
       return this.data;
     });
@@ -41,7 +42,8 @@ class UserManager extends Manager {
    * @returns Promise<UserModel>
    */
   findOne(id:number):Promise<UserModel> {
-    return this.query(`SELECT * FROM ${this.tableName} WHERE id = ?`, [id], result => {
+    return this.query(`SELECT * FROM ${this.tableName} WHERE id = ?`, [id])
+    .then(result => {
       this.data = result;
 
       // If there's no result, throw a NOT_FOUND
