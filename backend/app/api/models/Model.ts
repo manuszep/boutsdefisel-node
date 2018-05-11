@@ -1,4 +1,4 @@
-import db from "../../lib/db";
+import db from '../../lib/db';
 
 /**
  * Model
@@ -15,14 +15,14 @@ abstract class Model {
   // Database row id
   protected _id:number;
 
-  set id(id:number) {
-    if (typeof id === "undefined") return;
+  set id (id:number) {
+    if (typeof id === 'undefined') return;
     // If the entity has an id, it's in the DB
     this._inDb = true;
     this._id = id;
   }
 
-  get id():number {
+  get id ():number {
     return this._id;
   }
 
@@ -30,15 +30,15 @@ abstract class Model {
    * Add a field to the dirty list
    * @param key string The name of the field
    */
-  protected setDirty(key:string) {
-      this._dirty[key] = true;
+  protected setDirty (key:string) {
+    this._dirty[key] = true;
   }
 
   /**
    * Clear the dirty list
    */
-  public setClean() {
-      this._dirty = {};
+  public setClean () {
+    this._dirty = {};
   }
 
   /**
@@ -49,8 +49,8 @@ abstract class Model {
    *
    * @returns Promise<any>
    */
-  protected query(query:string, data:Array<any>|{}):Promise<any> {
-    return new Promise ((resolve, reject) => {
+  protected query (query:string, data:Array<any>|{}):Promise<any> {
+    return new Promise((resolve, reject) => {
       db.query(query, data)
         .then(result => {
           resolve(result);
@@ -69,8 +69,8 @@ abstract class Model {
    *
    * @returns boolean if field is changed
    */
-  protected setPersistableValue(name:string, value:any):boolean {
-    if (typeof value === "undefined" || value === this[name]) return false;
+  protected setPersistableValue (name:string, value:any):boolean {
+    if (typeof value === 'undefined' || value === this[name]) return false;
     this.setDirty(name);
     this[`_${name}`] = value;
     return true;
@@ -81,26 +81,26 @@ abstract class Model {
    *
    * @returns Promise<any>
    */
-  persist():Promise<any> {
+  persist ():Promise<any> {
     return new Promise((resolve, reject) => {
       if (this._inDb) {
         this.update()
-        .then((result) => {
-          this.setClean();
-          resolve(result);
-        })
-        .catch(err => {
-          reject(err);
-        });
+          .then(result => {
+            this.setClean();
+            resolve(result);
+          })
+          .catch(err => {
+            reject(err);
+          });
       } else {
         this.create()
-        .then(id => {
-          this.setClean();
-          resolve(id);
-        })
-        .catch(err => {
-          reject(err);
-        });
+          .then(id => {
+            this.setClean();
+            resolve(id);
+          })
+          .catch(err => {
+            reject(err);
+          });
       }
     });
   }
@@ -110,7 +110,7 @@ abstract class Model {
    *
    * @returns {} of key-values
    */
-  abstract serialize():{ [s: string]: any; };
+  abstract serialize ():{ [s: string]: any; };
 
   /**
    * Turns a serialized representation into an actual entity
@@ -118,28 +118,28 @@ abstract class Model {
    * @param data object An {} of key-values
    * @returns any The entity object
    */
-  abstract unserialize(data:{}):any;
+  abstract unserialize (data:{}):any;
 
   /**
    * Execute an update of the entity in the database
    *
    * @returns Promise<any> mySql response
    */
-  abstract update():Promise<any>;
+  abstract update ():Promise<any>;
 
   /**
    * Adds an entity to the database
    *
    * @returns Promise<number> the insert id
    */
-  abstract create():Promise<number>;
+  abstract create ():Promise<number>;
 
   /**
    * Deletes an entity from the database
    *
    * @returns Promise<any> mySql response
    */
-  abstract delete():Promise<any>;
+  abstract delete ():Promise<any>;
 }
 
 export default Model;

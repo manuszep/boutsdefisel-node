@@ -1,5 +1,5 @@
-import Manager from "./Manager";
-import UserModel from "./UserModel";
+import Manager from './Manager';
+import UserModel from './UserModel';
 
 /**
  * UserManager provides helpers to access model and database
@@ -8,7 +8,7 @@ import UserModel from "./UserModel";
  */
 class UserManager extends Manager {
   // Database table name
-  protected tableName = "users";
+  protected tableName = 'users';
   // Stores data from last query
   private data;
 
@@ -18,7 +18,7 @@ class UserManager extends Manager {
    * @param data {}
    * @returns UserModel
    */
-  getModel(data?:{ [key: string]: any }):UserModel {
+  getModel (data?:{ [key: string]: any }):UserModel {
     return new UserModel(data);
   }
 
@@ -27,12 +27,12 @@ class UserManager extends Manager {
    *
    * @returns Promise<{}[]>
    */
-  findAll():Promise<{}[]> {
+  findAll ():Promise<{}[]> {
     return this.query(`SELECT * FROM ${this.tableName}`, null)
-    .then(result => {
-      this.data = result;
-      return this.data;
-    });
+      .then(result => {
+        this.data = result;
+        return this.data;
+      });
   }
 
   /**
@@ -41,22 +41,22 @@ class UserManager extends Manager {
    * @param id number
    * @returns Promise<UserModel>
    */
-  findOne(id:number):Promise<UserModel> {
+  findOne (id:number):Promise<UserModel> {
     return this.query(`SELECT * FROM ${this.tableName} WHERE id = ?`, [id])
-    .then(result => {
-      this.data = result;
+      .then(result => {
+        this.data = result;
 
-      // If there's no result, throw a NOT_FOUND
-      if (!result.length) {
-        throw {code: "NOT_FOUND"};
-      }
+        // If there's no result, throw a NOT_FOUND
+        if (!result.length) {
+          throw { code: 'NOT_FOUND' };
+        }
 
-      // Hydrate model
-      const user = new UserModel(this.data[0]);
-      // Set model as clean since all values are dirty after hydration
-      user.setClean();
-      return user;
-    });
+        // Hydrate model
+        const user = new UserModel(this.data[0]);
+        // Set model as clean since all values are dirty after hydration
+        user.setClean();
+        return user;
+      });
   }
 
   /**
@@ -65,15 +65,15 @@ class UserManager extends Manager {
    * @param username string
    * @returns Promise<UserModel>
    */
-  findOneByUsername(username:string):Promise<UserModel> {
-    const user = new UserModel({username: username});
+  findOneByUsername (username:string):Promise<UserModel> {
+    const user = new UserModel({ username });
     return this.query(`SELECT * FROM ${this.tableName} WHERE usernameCanonical = ?`, [user.usernameCanonical])
       .then(result => {
         this.data = result;
 
         // If there's no result, throw a NOT_FOUND
         if (!result.length) {
-          throw {code: "NOT_FOUND"};
+          throw { code: 'NOT_FOUND' };
         }
 
         // Hydrate model
@@ -90,9 +90,9 @@ class UserManager extends Manager {
    * @param rows {}][] list of mySQL rows
    * @returns UserModel[]
    */
-  hydrateObjects(rows:{}[]):UserModel[] {
+  hydrateObjects (rows:{}[]):UserModel[] {
     this.data = [];
-    rows.forEach( (row) => {
+    rows.forEach(row => {
       this.data.push(new UserModel(row));
     });
 

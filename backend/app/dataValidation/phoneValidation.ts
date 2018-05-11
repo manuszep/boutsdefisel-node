@@ -3,28 +3,8 @@ const pattern = /^((\+|00)32\s?|0)(\d\s?\d{3}|\d{2}\s?\d{2})(\s?\d{2}){2}$/;
 // Regex to validate mobile phone number
 const patternMobile = /^((\+|00)32\s?|0)4(60|[789]\d)(\s?\d{2}){3}$/;
 
-export const PHONE_FIXED = "PHONE_FIXED";
-export const PHONE_MOBILE = "PHONE_MOBILE";
-
-/**
- * Validate a phone number against regex
- *
- * @param phone string
- * @returns boolean
- */
-export const validatePhone = (phone:string):boolean => {
-  // If phone number is empty, exit
-  if (typeof phone === "undefined" || phone === null) return;
-  // Convert number to database format
-  const p = phoneReverseTransform(phone);
-
-  // As the conversion trims the number, it could be empty now. Exit
-  if (p === "") return true;
-
-  if (p.match(pattern) || p.match(patternMobile)) return true;
-
-  return false;
-}
+export const PHONE_FIXED = 'PHONE_FIXED';
+export const PHONE_MOBILE = 'PHONE_MOBILE';
 
 /**
  * Detect if phone number is mobile or fixed
@@ -35,7 +15,9 @@ export const validatePhone = (phone:string):boolean => {
 export const getPhoneType = (phone:string):string => {
   if (phone.match(pattern)) return PHONE_FIXED;
   if (phone.match(patternMobile)) return PHONE_MOBILE;
-}
+
+  return '';
+};
 
 /**
  * Convert phone number string to database format
@@ -45,7 +27,7 @@ export const getPhoneType = (phone:string):string => {
  */
 export const phoneReverseTransform = (phone:string):string => {
   // If phone number is empty, return as is
-  if (typeof phone === "undefined" || phone === null || !phone.length) return phone;
+  if (typeof phone === 'undefined' || phone === null || !phone.length) return phone;
 
   let p:string;
 
@@ -67,7 +49,7 @@ export const phoneReverseTransform = (phone:string):string => {
   }
 
   return p;
-}
+};
 
 /**
  * Convert database phone format to readable format
@@ -77,18 +59,18 @@ export const phoneReverseTransform = (phone:string):string => {
  */
 export const phoneTransform = (phone:string):string => {
   // If phone number is empty, return as is
-  if (typeof phone === "undefined" || phone === null) return phone;
+  if (typeof phone === 'undefined' || phone === null) return phone;
   // Remove any leading or trailing spaces
-  let p = phone.trim();
+  const p = phone.trim();
   // Check type to choose formatting
   const type = getPhoneType(p);
   // Define matching patterns
   const patterns = {
     [PHONE_FIXED]: /^(\+\d{2})?(0?\d)(\d{3})(\d{2})(\d{2})$/i,
     [PHONE_MOBILE]: /^(\+\d{2})(\d{3})(\d{2})(\d{2})(\d{2})$/i
-  }
+  };
   // If a type is found and trimmed number is not empty
-  if (typeof type !== "undefined" && p !== "") {
+  if (typeof type !== 'undefined' && p !== '') {
     // Get matches array
     const m = p.match(patterns[type]);
     // Format result
@@ -96,4 +78,24 @@ export const phoneTransform = (phone:string):string => {
   }
 
   return p;
-}
+};
+
+/**
+ * Validate a phone number against regex
+ *
+ * @param phone string
+ * @returns boolean
+ */
+export const validatePhone = (phone:string):boolean => {
+  // If phone number is empty, exit
+  if (typeof phone === 'undefined' || phone === null) return true;
+  // Convert number to database format
+  const p = phoneReverseTransform(phone);
+
+  // As the conversion trims the number, it could be empty now. Exit
+  if (p === '') return true;
+
+  if (p.match(pattern) || p.match(patternMobile)) return true;
+
+  return false;
+};

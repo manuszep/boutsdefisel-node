@@ -1,8 +1,9 @@
+import Routes from './api/routes';
+import security from './config/security';
+
 import express = require('express');
 import bodyParser = require('body-parser');
 import morgan = require('morgan');
-import UserRoute from './api/routes/UserRoute';
-import security from './config/security';
 
 const app = express();
 const port = 7070;
@@ -14,6 +15,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(morgan('dev'));
 
-UserRoute(app);
+Routes(app);
 
-app.listen(port, "backend");
+app.listen(port, 'backend');
