@@ -52,7 +52,7 @@ class UserModel extends Model {
     this._locked = false;
     this._role = ROLE_USER;
 
-    this.generateSalt():
+    this.generateSalt();
     this.unserialize(data);
   }
 
