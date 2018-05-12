@@ -4,6 +4,7 @@ import { ROLE_USER } from '../../lib/roles';
 import { phoneTransform, phoneReverseTransform } from '../../dataValidation/phoneValidation';
 
 import jwt = require('jsonwebtoken');
+import crypto = require('crypto');
 /**
  * UserModel
  *
@@ -51,6 +52,7 @@ class UserModel extends Model {
     this._locked = false;
     this._role = ROLE_USER;
 
+    this.generateSalt():
     this.unserialize(data);
   }
 
@@ -96,8 +98,10 @@ class UserModel extends Model {
 
   get plainPassword ():string { return this._plainPassword; }
   set plainPassword (plainPassword:string) {
-    if (plainPassword === this.plainPassword) return;
+    if (plainPassword === null && typeof plainPassword === 'undefined' || plainPassword === this.plainPassword) return;
     this._plainPassword = plainPassword;
+    this.generateSalt();
+    this.password = this.hashPassword(plainPassword);
   }
 
   get lastLogin ():Date { return this._lastLogin; }
@@ -187,6 +191,26 @@ class UserModel extends Model {
 
   get deletedAt ():Date { return this._deletedAt; }
   set deletedAt (deletedAt:Date) { this.setPersistableValue('deletedAt', deletedAt); }
+
+  generateSalt () {
+    const length = 16;
+    this.salt = crypto.randomBytes(Math.ceil(length/2))
+      .toString('hex') // convert to hexadecimal format
+      .slice(0,length); //return required number of characters
+  }
+
+  hashPassword (password:string):string {
+    if (password !== null && password !== 'undefined') {
+      const hash = crypto.createHmac('sha512', this.salt); // Hashing algorithm sha512
+      hash.update(password);
+
+      return hash.digest('hex');
+    }
+  }
+
+  checkPassword (password:string):boolean {
+    return this.password === this.hashPassword(password);
+  }
 
   /**
    * Returns the serialized representation of a User
@@ -360,7 +384,8 @@ class UserModel extends Model {
    *
    * @returns string
    */
-  authenticate ():string {
+  authenticate (password:string):string {
+    if (this.hashPassword(password) !== this.password) throw {code: 'NO_AUTH', message: 'Authentication failed'};
     const payload = { id: this._id, role: this.role };
     const token = jwt.sign(payload, security.secret, { expiresIn: '1d' });
 

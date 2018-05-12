@@ -11,7 +11,6 @@ export default {
   },
   create_a_user: (req, res) => {
     const user = UserManager.getModel(req.body);
-
     user.persist()
       .then(() => {
         res.json(user.serialize());
@@ -54,8 +53,7 @@ export default {
   authenticate: (req, res) => {
     UserManager.findOneByUsername(req.body.username)
       .then(user => {
-        user.password = req.body.password;
-        const token = user.authenticate();
+        const token = user.authenticate(req.body.password);
         res.json({
           success: true,
           token
