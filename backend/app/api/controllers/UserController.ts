@@ -1,7 +1,7 @@
 import UserManager from '../models/UserManager';
 
 export default {
-  list_all_users: (req, res) => {
+  listAllUsers: (req, res) => {
     UserManager.findAll().then(rows => {
       res.json(rows);
     })
@@ -9,7 +9,7 @@ export default {
         res.status(500).json(err);
       });
   },
-  create_a_user: (req, res) => {
+  createUser: (req, res) => {
     const user = UserManager.getModel(req.body);
     user.persist()
       .then(() => {
@@ -19,15 +19,15 @@ export default {
         res.status(500).json(err);
       });
   },
-  read_a_user: (req, res) => {
-    UserManager.findOne(req.params.id).then(row => {
-      res.json(row);
+  readUser: (req, res) => {
+    UserManager.findOne(req.params.id).then(user => {
+      res.json(user.serialize());
     })
       .catch(err => {
         res.status(500).json(err);
       });
   },
-  update_a_user: (req, res) => {
+  updateUser: (req, res) => {
     UserManager.findOne(req.params.id)
       .then(user => {
         user.unserialize(req.body);
@@ -40,7 +40,7 @@ export default {
         res.status(500).json(err);
       });
   },
-  delete_a_user: (req, res) => {
+  deleteUser: (req, res) => {
     UserManager.findOne(req.params.id)
       .then(user => user.delete())
       .then(result => {

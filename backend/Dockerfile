@@ -10,4 +10,8 @@ RUN npm install
 
 EXPOSE 7070
 
+ENV DB=db
+ENV DB_PORT=3306
+ENV DOMAIN=backend
+
 ENTRYPOINT [ "pm2-runtime", "dist/", "--watch" ]

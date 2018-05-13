@@ -33,3 +33,16 @@ CREATE TABLE `users` (
   UNIQUE KEY `key_usernameCanonical` (`usernameCanonical`),
   UNIQUE KEY `key_emailCanonical` (`emailCanonical`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+CREATE TABLE `categories` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) NOT NULL,
+  `lvl` int(11) NOT NULL,
+  `parent` int(11),
+  `slug` varchar(255) NOT NULL,
+  `createdAt` datetime NOT NULL,
+  `updatedAt` datetime NOT NULL,
+  `deletedAt` datetime,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `key_slug` (`slug`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
