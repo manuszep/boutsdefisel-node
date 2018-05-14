@@ -1,4 +1,5 @@
 import UserManager from '../models/UserManager';
+import { handleError } from '../../lib/error';
 
 export default {
   listAllUsers: (req, res) => {
@@ -6,7 +7,7 @@ export default {
       res.json(rows);
     })
       .catch(err => {
-        res.status(500).json(err);
+        handleError(res, err);
       });
   },
   createUser: (req, res) => {
@@ -16,7 +17,7 @@ export default {
         res.json(user.serialize());
       })
       .catch(err => {
-        res.status(500).json(err);
+        handleError(res, err);
       });
   },
   readUser: (req, res) => {
@@ -24,7 +25,7 @@ export default {
       res.json(user.serialize());
     })
       .catch(err => {
-        res.status(500).json(err);
+        handleError(res, err);
       });
   },
   updateUser: (req, res) => {
@@ -37,7 +38,7 @@ export default {
         res.json(result);
       })
       .catch(err => {
-        res.status(500).json(err);
+        handleError(res, err);
       });
   },
   deleteUser: (req, res) => {
@@ -47,7 +48,7 @@ export default {
         res.json(result);
       })
       .catch(err => {
-        res.status(500).json(err);
+        handleError(res, err);
       });
   },
   authenticate: (req, res) => {
@@ -60,7 +61,7 @@ export default {
         });
       })
       .catch(err => {
-        res.status(500).json(err);
+        handleError(res, err);
       });
   }
 };

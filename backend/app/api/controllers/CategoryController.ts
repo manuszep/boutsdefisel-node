@@ -1,4 +1,5 @@
 import CategoryManager from '../models/CategoryManager';
+import { handleError } from '../../lib/error';
 
 export default {
   listAllCategories: (req, res) => {
@@ -6,7 +7,7 @@ export default {
       res.json(CategoryManager.serializeCollection(rows));
     })
       .catch(err => {
-        res.status(500).json(err);
+        handleError(res, err);
       });
   },
   createCategory: (req, res) => {
@@ -16,7 +17,7 @@ export default {
         res.json(category.serialize());
       })
       .catch(err => {
-        res.status(500).json(err);
+        handleError(res, err);
       });
   },
   readCategory: (req, res) => {
@@ -24,7 +25,7 @@ export default {
       res.json(category.serialize());
     })
       .catch(err => {
-        res.status(500).json(err);
+        handleError(res, err);
       });
   },
   updateCategory: (req, res) => {
@@ -37,7 +38,7 @@ export default {
         res.json(result);
       })
       .catch(err => {
-        res.status(500).json(err);
+        handleError(res, err);
       });
   },
   deleteCategory: (req, res) => {
@@ -47,7 +48,7 @@ export default {
         res.json(result);
       })
       .catch(err => {
-        res.status(500).json(err);
+        handleError(res, err);
       });
   }
 };
