@@ -7,6 +7,7 @@ import morgan = require('morgan');
 
 const app = express();
 const port = 7070;
+const domain = process.env.DOMAIN || 'localhost';
 
 app.set('trust proxy', 'loopback');
 app.set('secret', security.secret);
@@ -17,4 +18,4 @@ app.use(morgan('dev'));
 
 Routes(app);
 
-app.listen(port, 'backend');
+app.listen(port, domain);

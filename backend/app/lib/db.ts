@@ -1,4 +1,4 @@
-import dbConfig from '../config/db.js';
+import dbConfig from '../config/db';
 
 import mysql = require('promise-mysql');
 

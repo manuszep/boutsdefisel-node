@@ -38,14 +38,14 @@ export const phoneReverseTransform = (phone:string):string => {
   // Remove the 0 at the start
   p = p.replace(/^0/g, '');
 
-  // If the country prefix is there, there might still be a 0 before the city prefix. Remove it
-  if (p.substr(3, 1) === '0') {
-    p = `${p.substr(0, 3)}${p.substr(4)}`;
-  }
-
   // If there's no country prefix, add it
   if (p.substr(0, 1) !== '+') {
     p = `+32${p}`;
+  }
+
+  // If the country prefix is there, there might still be a 0 before the city prefix. Remove it
+  if (p.substr(3, 1) === '0') {
+    p = `${p.substr(0, 3)}${p.substr(4)}`;
   }
 
   return p;
