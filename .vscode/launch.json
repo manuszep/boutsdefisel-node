@@ -21,7 +21,11 @@
               "${workspaceFolder}/backend/app/dist/**/*.js"
             ],
             "console": "integratedTerminal",
-            "internalConsoleOptions": "neverOpen"
+            "internalConsoleOptions": "neverOpen",
+            "skipFiles": [
+                "${workspaceRoot}/backend/app/node_modules/**/*.js",
+                "<node_internals>/**/*.js"
+            ]
         }
     ]
 }

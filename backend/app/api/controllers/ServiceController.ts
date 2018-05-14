@@ -49,11 +49,11 @@ export default {
     ServiceManager.findOneBySlug(req.params.slug)
       .then(result => {
         service = result;
-        return UserManager.findOne(req.body.user);
+        return UserManager.findOne(req.body.user || service.user);
       })
       .then(result => {
         data.user = result;
-        return CategoryManager.findOne(req.body.category);
+        return CategoryManager.findOne(req.body.category || service.category);
       })
       .then(result => {
         data.category = result;

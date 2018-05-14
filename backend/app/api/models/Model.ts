@@ -122,7 +122,12 @@ abstract class Model {
     // Loop over dirty properies to generate setter string and values array
     Object.keys(this._dirty).forEach(key => {
       setters.push(`${key} = ?`);
-      values.push(this._fields[key]);
+
+      if (typeof this._fields[key].id !== 'undefined') {
+        values.push(this._fields[key].id);
+      } else {
+        values.push(this._fields[key]);
+      }
     });
 
     // Update the updatedAt column
@@ -233,17 +238,17 @@ abstract class Model {
     for (var propName in data) {
       if (data[propName] === null || typeof data[propName] === 'undefined') {
         delete data[propName];
-      }
+      } else {
+        if (Array.isArray(data[propName])) {
+          data[propName] = this.serializeCollection(data[propName], forDb);
+        }
 
-      if (Array.isArray(data[propName])) {
-        data[propName] = this.serializeCollection(data[propName], forDb);
-      }
-
-      if (typeof data[propName].serialize == 'function' || typeof data[propName].id !== 'undefined') {
-        if (forDb) {
-          data[propName] = data[propName].serialize(forDb);
-        } else {
-          data[propName] = data[propName].id;
+        if (typeof data[propName].serialize == 'function' || typeof data[propName].id !== 'undefined') {
+          if (forDb) {
+            data[propName] = data[propName].serialize(forDb);
+          } else {
+            data[propName] = data[propName].id;
+          }
         }
       }
     }

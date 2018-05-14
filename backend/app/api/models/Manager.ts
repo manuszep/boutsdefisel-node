@@ -33,7 +33,12 @@ abstract class Manager {
     const res = [];
 
     data.forEach(item => {
-      res.push(item.serialize());
+      if (typeof item.serialize === 'function') {
+        res.push(item.serialize());
+      } else {
+        res.push(item);
+      }
+
     });
 
     return res;
