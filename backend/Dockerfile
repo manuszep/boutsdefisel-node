@@ -14,4 +14,4 @@ ENV DB=db
 ENV DB_PORT=3306
 ENV DOMAIN=backend
 
-ENTRYPOINT [ "pm2-runtime", "dist/", "--watch" ]
+CMD [ "npm", "start" ]

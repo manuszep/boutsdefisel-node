@@ -19,8 +19,10 @@ services:
     depends_on:
       - db
     build: './backend'
+    command: npm run debug
     ports:
       - "7070:7070"
+      - "9222:9222"
     links:
       - db:db
     volumes:
