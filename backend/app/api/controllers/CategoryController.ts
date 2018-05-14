@@ -3,7 +3,7 @@ import CategoryManager from '../models/CategoryManager';
 export default {
   listAllCategories: (req, res) => {
     CategoryManager.findAll().then(rows => {
-      res.json(rows);
+      res.json(CategoryManager.serializeCollection(rows));
     })
       .catch(err => {
         res.status(500).json(err);

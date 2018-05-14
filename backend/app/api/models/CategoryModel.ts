@@ -18,9 +18,9 @@ class CategoryModel extends Model {
   } = {};
 
   protected _props:{
-    services:number[],
-    children:any
-  }
+    services?:number[],
+    children?:any
+  } = {};
 
   /**
    * Initialize object
@@ -57,11 +57,6 @@ class CategoryModel extends Model {
   get children():number[]|CategoryModel[] { return this._props.children; }
   set children(children:number[]|CategoryModel[]) {
     if (typeof children === 'undefined' || !children.length || children === null) return;
-    this._props.children = children;
-  }
-
-  public setChildren(children:any) {
-    if (typeof children === 'undefined' || children === null || children.length === 0) return;
     this._props.children = children;
   }
 

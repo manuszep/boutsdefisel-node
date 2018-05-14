@@ -2,7 +2,7 @@
   "name": "boutsdefisel-node-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app/index.ts",
   "scripts": {
     "start": "pm2 start dist/index.js --watch",
     "stop": "pm2 stop all",

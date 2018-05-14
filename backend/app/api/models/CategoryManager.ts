@@ -59,7 +59,7 @@ class CategoryManager extends Manager {
         });
       })
       .then(result => {
-        return result;
+        return this.hydrateObjects(result);
       });
   }
 
@@ -113,18 +113,22 @@ class CategoryManager extends Manager {
   }
 
   /**
-   * Loop over mySQL rows and hydrate as UserModel
+   * Loop over mySQL rows and hydrate as CategoryModel
    *
    * @param rows {}][] list of mySQL rows
    * @returns UserModel[]
    */
-  hydrateObjects (rows:{}[]):CategoryModel[] {
-    this.data = [];
+  hydrateObjects (rows:{[key:string]:any}[]):CategoryModel[] {
+    const data = [];
     rows.forEach(row => {
-      this.data.push(new CategoryModel(row));
+      if (typeof row.children !== 'undefined' && row.children !== null) {
+        row.children = this.hydrateObjects(row.children);
+      }
+
+      data.push(new CategoryModel(row));
     });
 
-    return this.data;
+    return data;
   }
 }
 

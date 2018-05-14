@@ -28,6 +28,16 @@ abstract class Manager {
         });
     });
   }
+
+  public serializeCollection(data:any[]):{[key:string]:any}[] {
+    const res = [];
+
+    data.forEach(item => {
+      res.push(item.serialize());
+    });
+
+    return res;
+  }
 }
 
 export default Manager;

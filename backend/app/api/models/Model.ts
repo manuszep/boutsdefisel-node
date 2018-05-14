@@ -146,8 +146,6 @@ abstract class Model {
   protected update ():Promise<any> {
     const gettersSetters = this.buildUpdateQuery();
 
-    console.log(gettersSetters);
-
     // If values is empty, no change is required throw error
     if (gettersSetters.values.length <= 1) throw { code: 'NO_CHANGES' };
 
@@ -202,6 +200,18 @@ abstract class Model {
       });
   }
 
+  serializeCollection(data:any[]):any[] {
+    const res = [];
+
+    for (let i = 0; i < data.length; i++) {
+      if (typeof data[i].serialize === 'function') {
+        res.push(data[i].serialize());
+      }
+    }
+
+    return res;
+  }
+
   /**
    * Returns the serialized representation of an Entity
    *
@@ -213,6 +223,10 @@ abstract class Model {
     for (var propName in data) {
       if (data[propName] === null || typeof data[propName] === 'undefined') {
         delete data[propName];
+      }
+
+      if (Array.isArray(data[propName])) {
+        data[propName] = this.serializeCollection(data[propName]);
       }
     }
 
@@ -232,7 +246,6 @@ abstract class Model {
         if (data[propName] !== null || typeof data[propName] !== 'undefined') {
           const camelizedPropName = `set${camelize(propName, true)}`;
           if (typeof this[camelizedPropName] === 'function') {
-            console.log(camelizedPropName);
             this[camelizedPropName](data[propName]);
           }
           this[propName] = data[propName];

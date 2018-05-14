@@ -54,7 +54,7 @@ const createFullUser = () => {
   });
 }
 
-describe('Constructor', () => {
+describe('User Constructor', () => {
   it('should return the very basic UserModel object', () => {
     const user = new UserModel();
     chai.expect(user.enabled).to.equal(false);
@@ -62,7 +62,9 @@ describe('Constructor', () => {
     chai.expect(user.role).to.equal(ROLE_USER);
     chai.expect(user.salt).to.not.be.undefined;
   });
+});
 
+describe('User Canonical', () => {
   it('should generate usernameCanonical', () => {
     const user = new UserModel();
     user.username = username;
@@ -76,7 +78,9 @@ describe('Constructor', () => {
     chai.expect(user.email).to.equal(email);
     chai.expect(user.emailCanonical).to.equal(email.toLowerCase());
   });
+});
 
+describe('User Phones', () => {
   it('should transform phone number', () => {
     const user = new UserModel();
     user.phone = phone;
@@ -94,7 +98,32 @@ describe('Constructor', () => {
     user.mobile2 = mobile2;
     chai.expect(user.mobile2).to.equal('+32477789012');
   });
+});
 
+describe('User Password', () => {
+  it('should generate salt and encrypt a password', () => {
+    const user = new UserModel();
+    const currentSalt = user.salt;
+    user.plainPassword = password;
+
+    chai.expect(user.salt).to.not.be.undefined;
+    chai.expect(user.salt).to.not.equal(currentSalt); // Make sure a new salt is made
+    chai.expect(user.password.length).to.equal(128);
+  });
+
+  it('should authenticate a user against password and return token', () => {
+    const user = new UserModel();
+    user.plainPassword = password;
+
+    chai.expect(() => user.authenticate('wrongPassword')).to.throw();
+
+    const auth = user.authenticate(password);
+    chai.expect(auth.length).to.equal(153);
+    chai.expect(auth.indexOf('.')).to.equal(36);
+  });
+});
+
+describe('User Serialise', () => {
   it('should populate object properties and fields with constructor', () => {
     const user = createFullUser();
 
@@ -120,27 +149,6 @@ describe('Constructor', () => {
     chai.expect(user.mobile2).to.equal('+32477789012');
     chai.expect(user.balance).to.equal(balance);
     chai.expect(user.picture).to.equal(picture);
-  });
-
-  it('should generate salt and encrypt a password', () => {
-    const user = new UserModel();
-    const currentSalt = user.salt;
-    user.plainPassword = password;
-
-    chai.expect(user.salt).to.not.be.undefined;
-    chai.expect(user.salt).to.not.equal(currentSalt); // Make sure a new salt is made
-    chai.expect(user.password.length).to.equal(128);
-  });
-
-  it('should authenticate a user against password and return token', () => {
-    const user = new UserModel();
-    user.plainPassword = password;
-
-    chai.expect(() => user.authenticate('wrongPassword')).to.throw();
-
-    const auth = user.authenticate(password);
-    chai.expect(auth.length).to.equal(153);
-    chai.expect(auth.indexOf('.')).to.equal(36);
   });
 
   it('should serialize data', () => {
