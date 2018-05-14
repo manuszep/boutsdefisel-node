@@ -47,19 +47,6 @@ const children = [
   }
 ];
 
-const hydrateObjects = (rows:{[key:string]:any}[]):CategoryModel[] => {
-  const data = [];
-  rows.forEach(row => {
-    if (typeof row.children !== 'undefined' && row.children !== null) {
-      row.children = hydrateObjects(row.children);
-    }
-
-    data.push(new CategoryModel(row));
-  });
-
-  return data;
-}
-
 describe('Category Setters', () => {
   it('should generate slug from title', () => {
     const category = new CategoryModel();
@@ -78,10 +65,5 @@ describe('Category Serialise', () => {
       slug,
       children
     };
-
-    const h = hydrateObjects([category]);
-
-    console.log("parent", h);
-    console.log("children", h[0].children);
   });
 });
