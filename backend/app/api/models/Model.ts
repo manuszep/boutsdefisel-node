@@ -180,6 +180,13 @@ abstract class Model {
     });
   }
 
+  protected getDeleteQuery():Promise<any> {
+    return this.query(
+      `UPDATE ${this.tableName} SET deletedAt = ? Where id = ${this.id}`,
+      this.deletedAt
+    )
+  }
+
   /**
    * Deletes a row from the database. Actually, it just sets the deletedAt value
    *
@@ -190,10 +197,7 @@ abstract class Model {
     if (typeof this.deletedAt !== 'undefined' && this.deletedAt !== null) throw { code: 'ALREADY_DELETED' };
     this.deletedAt = new Date();
 
-    return this.query(
-      `UPDATE ${this.tableName} SET deletedAt = ? Where ID = ${this.id}`,
-      this.deletedAt
-    )
+    return this.getDeleteQuery()
       .then(result => result)
       .catch(err => {
         throw err;

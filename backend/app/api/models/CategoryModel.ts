@@ -79,6 +79,18 @@ class CategoryModel extends Model {
     if (typeof child === 'undefined' || child === null) return;
     this._props.children.push(child);
   }
+
+  /**
+   * Extend getDeleteQuery in order to cascade to children
+   *
+   * @returns Promise<any> mySql response
+   */
+  protected getDeleteQuery():Promise<any> {
+    return this.query(
+      `UPDATE ${this.tableName} SET deletedAt = ? Where id = ${this.id} or parent = ${this.id}`,
+      this.deletedAt
+    )
+  }
 }
 
 export default CategoryModel;
