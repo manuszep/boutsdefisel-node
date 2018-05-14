@@ -11,10 +11,10 @@ class CategoryModel extends Model {
   protected tableName = 'categories';
 
   protected _fields:{
-    title?:string;
-    lvl?:number;
-    parent?:number;
-    slug?:string;
+    title?:string,
+    lvl?:number,
+    parent?:number,
+    slug?:string,
   } = {};
 
   protected _props:{

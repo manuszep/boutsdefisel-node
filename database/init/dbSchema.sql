@@ -46,3 +46,23 @@ CREATE TABLE `categories` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `key_slug` (`slug`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+CREATE TABLE `services` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) NOT NULL,
+  `slug` varchar(255) NOT NULL,
+  `body` text,
+  `user` int(11) NOT NULL,
+  `type` int(2) NOT NULL,
+  `domain` int(2) NOT NULL,
+  `category` int(11) NOT NULL,
+  `picture` varchar(255),
+  `expiresAt` datetime,
+  `createdAt` datetime NOT NULL,
+  `updatedAt` datetime NOT NULL,
+  `deletedAt` datetime,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `key_slug` (`slug`),
+  FOREIGN KEY (`user`) REFERENCES users(`id`),
+  FOREIGN KEY (`category`) REFERENCES categories(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;

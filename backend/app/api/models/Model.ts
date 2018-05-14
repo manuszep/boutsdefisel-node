@@ -204,12 +204,18 @@ abstract class Model {
       });
   }
 
-  serializeCollection(data:any[]):any[] {
+  serializeCollection(data:any[], forDb:boolean = false):any[] {
     const res = [];
 
     for (let i = 0; i < data.length; i++) {
-      if (typeof data[i].serialize === 'function') {
-        res.push(data[i].serialize());
+      if (typeof data[i].serialize === 'function' || typeof data[i].id !== 'undefined') {
+        if (forDb) {
+          res.push(data[i].serialize(forDb));
+        } else {
+          res.push(data[i].id);
+        }
+      } else {
+        res.push(data[i])
       }
     }
 
@@ -230,7 +236,15 @@ abstract class Model {
       }
 
       if (Array.isArray(data[propName])) {
-        data[propName] = this.serializeCollection(data[propName]);
+        data[propName] = this.serializeCollection(data[propName], forDb);
+      }
+
+      if (typeof data[propName].serialize == 'function' || typeof data[propName].id !== 'undefined') {
+        if (forDb) {
+          data[propName] = data[propName].serialize(forDb);
+        } else {
+          data[propName] = data[propName].id;
+        }
       }
     }
 
