@@ -41,7 +41,6 @@ class CategoryManager extends Manager {
    * @returns Promise<{}[]>
    */
   findAll ():Promise<{}[]> {
-    // TODO: Fetch level1 then level2 then build a nested object
     return this.query(`SELECT * FROM ${this.tableName} WHERE lvl = ?`, 0)
       .then(result => {
         const promises_array:Array<any> = [];
