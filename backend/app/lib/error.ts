@@ -4,7 +4,7 @@ const codes = {
   ALREADY_DELETED: 500,
   NO_AUTH: 403,
   NOT_FOUND: 404
-}
+};
 
 export const handleError = (res, err) => {
   if (typeof err.code !== 'undefined' && typeof codes[err.code] !== 'undefined') {
@@ -13,4 +13,4 @@ export const handleError = (res, err) => {
   }
 
   res.status(500).json(err);
-}
+};

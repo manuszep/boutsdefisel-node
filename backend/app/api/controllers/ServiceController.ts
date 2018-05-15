@@ -13,7 +13,7 @@ export default {
       });
   },
   createService: (req, res) => {
-    const data = {...req.body};
+    const data = { ...req.body };
     let service;
 
     UserManager.findOne(req.body.user)
@@ -43,7 +43,7 @@ export default {
       });
   },
   updateService: (req, res) => {
-    const data = {...req.body};
+    const data = { ...req.body };
     let service;
 
     ServiceManager.findOneBySlug(req.params.slug)
@@ -77,4 +77,4 @@ export default {
         handleError(res, err);
       });
   }
-}
+};

@@ -35,8 +35,6 @@ class ServiceManager extends Manager {
       });
   }
 
-
-
   /**
    * Find a service from database based on id then hydrate as object
    *

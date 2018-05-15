@@ -103,19 +103,19 @@ abstract class Model {
         .catch(err => {
           throw err;
         });
-    } else {
-      return this.create()
-        .then(id => {
-          this.setClean();
-          return id;
-        })
-        .catch(err => {
-          throw err;
-        });
     }
+
+    return this.create()
+      .then(id => {
+        this.setClean();
+        return id;
+      })
+      .catch(err => {
+        throw err;
+      });
   }
 
-  protected buildUpdateQuery():{setters:string[],values:string[]} {
+  protected buildUpdateQuery ():{setters:string[], values:string[]} {
     const setters:string[] = [];
     const values:any[] = [];
 
@@ -140,7 +140,7 @@ abstract class Model {
     return {
       setters,
       values
-    }
+    };
   }
 
   /**
@@ -185,11 +185,11 @@ abstract class Model {
     });
   }
 
-  protected getDeleteQuery():Promise<any> {
+  protected getDeleteQuery ():Promise<any> {
     return this.query(
       `UPDATE ${this.tableName} SET deletedAt = ? Where id = ${this.id}`,
       this.deletedAt
-    )
+    );
   }
 
   /**
@@ -209,10 +209,10 @@ abstract class Model {
       });
   }
 
-  serializeCollection(data:any[], forDb:boolean = false):any[] {
+  serializeCollection (data:any[], forDb:boolean = false):any[] {
     const res = [];
 
-    for (let i = 0; i < data.length; i++) {
+    for (let i = 0; i < data.length; i += 1) {
       if (typeof data[i].serialize === 'function' || typeof data[i].id !== 'undefined') {
         if (forDb) {
           res.push(data[i].serialize(forDb));
@@ -220,7 +220,7 @@ abstract class Model {
           res.push(data[i].id);
         }
       } else {
-        res.push(data[i])
+        res.push(data[i]);
       }
     }
 
@@ -233,9 +233,9 @@ abstract class Model {
    * @returns {} of key-values
    */
   serialize (forDb:boolean = false):{ [s: string]: any; } {
-    const data = forDb ? {...this._fields} : {...this._fields, ...this._props};
+    const data = forDb ? { ...this._fields } : { ...this._fields, ...this._props };
 
-    for (var propName in data) {
+    Object.keys(data).forEach(propName => {
       if (data[propName] === null || typeof data[propName] === 'undefined') {
         delete data[propName];
       } else {
@@ -243,7 +243,7 @@ abstract class Model {
           data[propName] = this.serializeCollection(data[propName], forDb);
         }
 
-        if (typeof data[propName].serialize == 'function' || typeof data[propName].id !== 'undefined') {
+        if (typeof data[propName].serialize === 'function' || typeof data[propName].id !== 'undefined') {
           if (forDb) {
             data[propName] = data[propName].serialize(forDb);
           } else {
@@ -251,7 +251,7 @@ abstract class Model {
           }
         }
       }
-    }
+    });
 
     return data;
   }
@@ -263,18 +263,18 @@ abstract class Model {
    * @returns any The entity object
    */
   unserialize (data:{ [s: string]: any; }):void {
-      if (typeof data === 'undefined') return;
+    if (typeof data === 'undefined') return;
 
-      for (var propName in data) {
-        if (data[propName] !== null || typeof data[propName] !== 'undefined') {
-          const camelizedPropName = `set${camelize(propName, true)}`;
-          if (typeof this[camelizedPropName] === 'function') {
-            this[camelizedPropName](data[propName]);
-          }
-          this[propName] = data[propName];
+    Object.keys(data).forEach(propName => {
+      if (data[propName] !== null || typeof data[propName] !== 'undefined') {
+        const camelizedPropName = `set${camelize(propName, true)}`;
+        if (typeof this[camelizedPropName] === 'function') {
+          this[camelizedPropName](data[propName]);
         }
+        this[propName] = data[propName];
       }
-    }
+    });
+  }
 }
 
 export default Model;

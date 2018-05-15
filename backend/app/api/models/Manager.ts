@@ -29,7 +29,7 @@ abstract class Manager {
     });
   }
 
-  public serializeCollection(data:any[]):{[key:string]:any}[] {
+  public serializeCollection (data:any[]):{[key:string]:any}[] {
     const res = [];
 
     data.forEach(item => {
@@ -38,7 +38,6 @@ abstract class Manager {
       } else {
         res.push(item);
       }
-
     });
 
     return res;

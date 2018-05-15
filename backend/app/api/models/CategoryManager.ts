@@ -22,8 +22,8 @@ class CategoryManager extends Manager {
     return new CategoryModel(data);
   }
 
-  getChildren(parentId:number, parentKey?:number):Promise<{[key:string]:number|{}[]}> {
-    return new Promise((resolve,reject) => {
+  getChildren (parentId:number, parentKey?:number):Promise<{[key:string]:number|{}[]}> {
+    return new Promise((resolve, reject) => {
       this.query(`SELECT * FROM ${this.tableName} WHERE parent = ?`, parentId)
         .then(result => {
           if (typeof parentKey !== 'undefined') {
@@ -31,8 +31,11 @@ class CategoryManager extends Manager {
           }
 
           resolve(result);
+        })
+        .catch(err => {
+          reject(err);
         });
-    })
+    });
   }
 
   /**
@@ -43,23 +46,21 @@ class CategoryManager extends Manager {
   findAll ():Promise<{}[]> {
     return this.query(`SELECT * FROM ${this.tableName} WHERE lvl = ?`, 0)
       .then(result => {
-        const promises_array:Array<any> = [];
+        const promisesArray:Array<any> = [];
 
         result.forEach((row, index) => {
-          promises_array.push(this.getChildren(row.id, index));
+          promisesArray.push(this.getChildren(row.id, index));
         });
 
-        return Promise.all(promises_array).then(subResult => {
-          subResult.forEach((row) => {
+        return Promise.all(promisesArray).then(subResult => {
+          subResult.forEach(row => {
             result[row.key].children = row.data;
           });
 
           return result;
         });
       })
-      .then(result => {
-        return this.hydrateObjects(result);
-      });
+      .then(result => this.hydrateObjects(result));
   }
 
   /**

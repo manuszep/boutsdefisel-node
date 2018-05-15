@@ -1,7 +1,7 @@
 import security from '../../config/security';
 import Model from './Model';
 import { ROLE_USER } from '../../lib/roles';
-import { phoneTransform, phoneReverseTransform } from '../../dataValidation/phoneValidation';
+import { phoneReverseTransform } from '../../dataValidation/phoneValidation';
 
 import jwt = require('jsonwebtoken');
 import crypto = require('crypto');
@@ -99,7 +99,10 @@ class UserModel extends Model {
 
   get plainPassword ():string { return this._plainPassword; }
   set plainPassword (plainPassword:string) {
-    if (plainPassword === null && typeof plainPassword === 'undefined' || plainPassword === this.plainPassword) return;
+    if (
+      (plainPassword === null && typeof plainPassword === 'undefined') ||
+      plainPassword === this.plainPassword
+    ) return;
     this._plainPassword = plainPassword;
     this.generateSalt();
     this.password = this.hashPassword(plainPassword);
@@ -186,9 +189,9 @@ class UserModel extends Model {
 
   private generateSalt () {
     const length = 16;
-    this.salt = crypto.randomBytes(Math.ceil(length/2))
+    this.salt = crypto.randomBytes(Math.ceil(length / 2))
       .toString('hex') // convert to hexadecimal format
-      .slice(0,length); //return required number of characters
+      .slice(0, length); // return required number of characters
   }
 
   private hashPassword (password:string):string {
@@ -198,6 +201,8 @@ class UserModel extends Model {
 
       return hash.digest('hex');
     }
+
+    return null;
   }
 
   private checkPassword (password:string):boolean {
@@ -210,7 +215,7 @@ class UserModel extends Model {
    * @returns string
    */
   authenticate (password:string):string {
-    if (this.hashPassword(password) !== this.password) throw {code: 'NO_AUTH', message: 'Authentication failed'};
+    if (this.hashPassword(password) !== this.password) throw { code: 'NO_AUTH', message: 'Authentication failed' };
     const payload = { id: this.id, role: this.role };
     const token = jwt.sign(payload, security.secret, { expiresIn: '1d' });
 

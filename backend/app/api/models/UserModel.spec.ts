@@ -1,9 +1,8 @@
-import UserModel from './UserModel';
-import { ROLE_USER, ROLE_COCO } from '../../lib/roles';
 import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
-import 'mocha';
 import { it } from 'mocha';
+import UserModel from './UserModel';
+import { ROLE_USER, ROLE_COCO } from '../../lib/roles';
 
 before(() => {
   chai.should();
@@ -29,30 +28,28 @@ const mobile2 = '0477 78 90 12';
 const balance = 10.55;
 const picture = 'pic.jpg';
 
-const createFullUser = () => {
-  return new UserModel({
-    username,
-    email,
-    enabled: true,
-    locked: true,
-    salt,
-    password,
-    lastLogin,
-    confirmationToken,
-    passwordRequestedAt,
-    role,
-    street,
-    streetNumber,
-    streetBox,
-    city,
-    zip,
-    phone,
-    mobile,
-    mobile2,
-    balance,
-    picture
-  });
-}
+const createFullUser = () => new UserModel({
+  username,
+  email,
+  enabled: true,
+  locked: true,
+  salt,
+  password,
+  lastLogin,
+  confirmationToken,
+  passwordRequestedAt,
+  role,
+  street,
+  streetNumber,
+  streetBox,
+  city,
+  zip,
+  phone,
+  mobile,
+  mobile2,
+  balance,
+  picture
+});
 
 describe('User Constructor', () => {
   it('should return the very basic UserModel object', () => {

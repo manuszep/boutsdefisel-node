@@ -1,8 +1,7 @@
-import CategoryModel from './CategoryModel';
 import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
-import 'mocha';
 import { it } from 'mocha';
+import CategoryModel from './CategoryModel';
 
 before(() => {
   chai.should();
@@ -16,34 +15,34 @@ const parent = null;
 const slug = 'title-1';
 const children = [
   {
-    "id": 2,
-    "title": "category 1",
-    "lvl": 1,
-    "parent": 1,
-    "slug": "category-1",
-    "createdAt": "2018-05-13T21:21:17.000Z",
-    "updatedAt": "2018-05-13T21:21:17.000Z",
-    "deletedAt": null
+    id: 2,
+    title: 'category 1',
+    lvl: 1,
+    parent: 1,
+    slug: 'category-1',
+    createdAt: '2018-05-13T21:21:17.000Z',
+    updatedAt: '2018-05-13T21:21:17.000Z',
+    deletedAt: null
   },
   {
-    "id": 3,
-    "title": "category 2",
-    "lvl": 1,
-    "parent": 1,
-    "slug": "category-2",
-    "createdAt": "2018-05-13T21:21:21.000Z",
-    "updatedAt": "2018-05-13T21:21:21.000Z",
-    "deletedAt": null
+    id: 3,
+    title: 'category 2',
+    lvl: 1,
+    parent: 1,
+    slug: 'category-2',
+    createdAt: '2018-05-13T21:21:21.000Z',
+    updatedAt: '2018-05-13T21:21:21.000Z',
+    deletedAt: null
   },
   {
-    "id": 4,
-    "title": "category 3",
-    "lvl": 1,
-    "parent": 1,
-    "slug": "category-3",
-    "createdAt": "2018-05-13T21:21:24.000Z",
-    "updatedAt": "2018-05-13T21:21:24.000Z",
-    "deletedAt": null
+    id: 4,
+    title: 'category 3',
+    lvl: 1,
+    parent: 1,
+    slug: 'category-3',
+    createdAt: '2018-05-13T21:21:24.000Z',
+    updatedAt: '2018-05-13T21:21:24.000Z',
+    deletedAt: null
   }
 ];
 
