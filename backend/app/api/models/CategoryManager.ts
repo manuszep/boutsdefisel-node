@@ -7,20 +7,9 @@ import CategoryModel from './CategoryModel';
  * @extends Manager
  */
 class CategoryManager extends Manager {
+  protected model = CategoryModel;
   // Database table name
   protected tableName = 'categories';
-  // Stores data from last query
-  private data;
-
-  /**
-   * Provide a CategoryModel
-   *
-   * @param data {}
-   * @returns CategoryModel
-   */
-  getModel (data?:{ [key: string]: any }):CategoryModel {
-    return new CategoryModel(data);
-  }
 
   getChildren (parentId:number, parentKey?:number):Promise<{[key:string]:number|{}[]}> {
     return new Promise((resolve, reject) => {
@@ -44,6 +33,8 @@ class CategoryManager extends Manager {
    * @returns Promise<{}[]>
    */
   findAll ():Promise<{}[]> {
+    let data;
+
     return this.query(`SELECT * FROM ${this.tableName} WHERE lvl = ?`, 0)
       .then(result => {
         const promisesArray:Array<any> = [];
@@ -52,39 +43,19 @@ class CategoryManager extends Manager {
           promisesArray.push(this.getChildren(row.id, index));
         });
 
-        return Promise.all(promisesArray).then(subResult => {
-          subResult.forEach(row => {
-            result[row.key].children = row.data;
-          });
+        data = result;
 
-          return result;
-        });
+        return Promise.all(promisesArray);
       })
-      .then(result => this.hydrateObjects(result));
-  }
-
-  /**
-   * Find a category from database based on ID then hydrate as object
-   *
-   * @param id number
-   * @returns Promise<UserModel>
-   */
-  findOne (id:number):Promise<CategoryModel> {
-    return this.query(`SELECT * FROM ${this.tableName} WHERE id = ?`, [id])
       .then(result => {
-        this.data = result;
+        result.forEach(row => {
+          data[row.key].children = row.data;
+        });
 
-        // If there's no result, throw a NOT_FOUND
-        if (!result.length) {
-          throw { code: 'NOT_FOUND' };
-        }
-
-        // Hydrate model
-        const category = new CategoryModel(this.data[0]);
-        // Set model as clean since all values are dirty after hydration
-        category.setClean();
-        return category;
-      });
+        return data;
+      })
+      .then(result => this.hydrateObjects(result))
+      .catch(err => { throw err });
   }
 
   /**
@@ -97,18 +68,7 @@ class CategoryManager extends Manager {
     const category = new CategoryModel({ slug });
     return this.query(`SELECT * FROM ${this.tableName} WHERE slug = ?`, [category.slug])
       .then(result => {
-        this.data = result;
-
-        // If there's no result, throw a NOT_FOUND
-        if (!result.length) {
-          throw { code: 'NOT_FOUND' };
-        }
-
-        // Hydrate model
-        category.unserialize(this.data[0]);
-        // Set model as clean since all values are dirty after hydration
-        category.setClean();
-        return category;
+        return this.handleSingleResult(result, category);
       });
   }
 

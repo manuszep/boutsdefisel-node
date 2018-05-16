@@ -214,7 +214,7 @@ abstract class Model {
 
     for (let i = 0; i < data.length; i += 1) {
       if (typeof data[i].serialize === 'function' || typeof data[i].id !== 'undefined') {
-        if (forDb) {
+        if (!forDb) {
           res.push(data[i].serialize(forDb));
         } else {
           res.push(data[i].id);
