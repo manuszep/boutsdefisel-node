@@ -9,7 +9,7 @@ import ExchangeModel from './ExchangeModel';
 class ExchangeManager extends Manager {
   protected model = ExchangeModel;
   // Database table name
-  protected tableName = 'exchanges';
+  public tableName = 'exchanges';
 }
 
 export default new ExchangeManager();

@@ -10,7 +10,7 @@ import { slugify } from '../../lib/utils';
  */
 class ServiceModel extends Model {
   // Name of the database table
-  protected tableName = 'services';
+  public tableName = 'services';
 
   protected _fields:{
     title?:string,

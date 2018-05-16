@@ -8,7 +8,7 @@ import db from '../../lib/db';
 abstract class Manager {
   protected model;
   // Database table name
-  protected tableName;
+  public tableName;
   // Stores data from last query
   protected data;
 

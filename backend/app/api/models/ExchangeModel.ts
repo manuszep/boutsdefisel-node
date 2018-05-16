@@ -8,7 +8,7 @@ import UserModel from './UserModel';
  */
 class ExchangeModel extends Model {
   // Name of the database table
-  protected tableName = 'exchanges';
+  public tableName = 'exchanges';
 
   protected _fields:{
     title?:string,

@@ -8,7 +8,7 @@ import { camelize } from '../../lib/utils';
  */
 abstract class Model {
   // Database table name
-  protected tableName;
+  public tableName;
   // Tells if the entity is already in the DB
   protected _inDb:boolean = false;
   // Stores a list of fields that are changed

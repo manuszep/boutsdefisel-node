@@ -12,7 +12,7 @@ import crypto = require('crypto');
  */
 class UserModel extends Model {
   // Name of the database table
-  protected tableName = 'users';
+  public tableName = 'users';
 
   private _plainPassword:string;
 

@@ -9,7 +9,7 @@ import CategoryModel from './CategoryModel';
 class CategoryManager extends Manager {
   protected model = CategoryModel;
   // Database table name
-  protected tableName = 'categories';
+  public tableName = 'categories';
 
   getChildren (parentId:number, parentKey?:number):Promise<{[key:string]:number|{}[]}> {
     return new Promise((resolve, reject) => {

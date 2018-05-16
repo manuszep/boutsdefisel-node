@@ -9,7 +9,7 @@ import UserModel from './UserModel';
 class UserManager extends Manager {
   protected model = UserModel;
   // Database table name
-  protected tableName = 'users';
+  public tableName = 'users';
 
   /**
    * Find a user from database based on username then hydrate as object

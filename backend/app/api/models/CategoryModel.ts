@@ -8,7 +8,7 @@ import { slugify } from '../../lib/utils';
  */
 class CategoryModel extends Model {
   // Name of the database table
-  protected tableName = 'categories';
+  public tableName = 'categories';
 
   protected _fields:{
     title?:string,
