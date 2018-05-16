@@ -12,6 +12,7 @@
     "debug": "nodemon --watch ./dist --inspect=0.0.0.0:9222 --nolazy ./dist/index.js",
     "docker-debug": "docker-compose up",
     "lint": "eslint . --ext ts",
+    "tslint": "tslint ./**/*.ts",
     "tsc": "tsc",
     "logs": "pm2 logs"
   },
@@ -49,6 +50,8 @@
     "morgan": "^1.9.0",
     "ts-node": "^6.0.3",
     "tsc": "^1.20150623.0",
+    "tslint": "^5.10.0",
+    "tslint-config-airbnb": "^5.8.0",
     "typescript": "^2.8.3",
     "typescript-eslint-parser": "^15.0.0",
     "typings": "^2.1.1"

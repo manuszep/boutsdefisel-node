@@ -31,8 +31,6 @@ const picture = 'pic.jpg';
 const createFullUser = () => new UserModel({
   username,
   email,
-  enabled: true,
-  locked: true,
   salt,
   password,
   lastLogin,
@@ -48,7 +46,9 @@ const createFullUser = () => new UserModel({
   mobile,
   mobile2,
   balance,
-  picture
+  picture,
+  enabled: true,
+  locked: true
 });
 
 describe('User Constructor', () => {

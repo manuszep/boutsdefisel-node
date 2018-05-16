@@ -3,7 +3,7 @@ import Model from './Model';
 import { ROLE_USER } from '../../lib/roles';
 import { phoneReverseTransform } from '../../dataValidation/phoneValidation';
 
-import jwt = require('jsonwebtoken');
+import jsonwebtoken = require('jsonwebtoken');
 import crypto = require('crypto');
 /**
  * UserModel
@@ -69,7 +69,9 @@ class UserModel extends Model {
   }
 
   get usernameCanonical ():string { return this._fields.usernameCanonical; }
-  set usernameCanonical (usernameCanonical:string) { this.setPersistableValue('usernameCanonical', usernameCanonical); }
+  set usernameCanonical (usernameCanonical:string) {
+    this.setPersistableValue('usernameCanonical', usernameCanonical);
+  }
 
   get email ():string { return this._fields.email; }
   /**
@@ -83,7 +85,9 @@ class UserModel extends Model {
   }
 
   get emailCanonical ():string { return this._fields.emailCanonical; }
-  set emailCanonical (emailCanonical:string) { this.setPersistableValue('emailCanonical', emailCanonical); }
+  set emailCanonical (emailCanonical:string) {
+    this.setPersistableValue('emailCanonical', emailCanonical);
+  }
 
   get enabled ():boolean { return this._fields.enabled; }
   set enabled (enabled:boolean) { this.setPersistableValue('enabled', enabled); }
@@ -112,7 +116,9 @@ class UserModel extends Model {
   set lastLogin (lastLogin:Date) { this.setPersistableValue('lastLogin', lastLogin); }
 
   get confirmationToken ():string { return this._fields.confirmationToken; }
-  set confirmationToken (confirmationToken:string) { this.setPersistableValue('confirmationToken', confirmationToken); }
+  set confirmationToken (confirmationToken:string) {
+    this.setPersistableValue('confirmationToken', confirmationToken);
+  }
 
   get passwordRequestedAt ():Date { return this._fields.passwordRequestedAt; }
   set passwordRequestedAt (passwordRequestedAt:Date) {
@@ -125,7 +131,9 @@ class UserModel extends Model {
    *
    * @param role string
    */
-  set role (role:string) { this.setPersistableValue('role', (typeof role !== 'undefined') ? role : ROLE_USER); }
+  set role (role:string) {
+    this.setPersistableValue('role', (typeof role !== 'undefined') ? role : ROLE_USER);
+  }
 
   get street ():string { return this._fields.street; }
   set street (street:string) { this.setPersistableValue('street', street); }
@@ -179,7 +187,9 @@ class UserModel extends Model {
    *
    * @param mobile2 string
    */
-  set mobile2 (mobile2:string) { this.setPersistableValue('mobile2', phoneReverseTransform(mobile2)); }
+  set mobile2 (mobile2:string) {
+    this.setPersistableValue('mobile2', phoneReverseTransform(mobile2));
+  }
 
   get balance ():number { return this._fields.balance; }
   set balance (balance:number) { this.setPersistableValue('balance', balance); }
@@ -215,9 +225,12 @@ class UserModel extends Model {
    * @returns string
    */
   authenticate (password:string):string {
-    if (this.hashPassword(password) !== this.password) throw { code: 'NO_AUTH', message: 'Authentication failed' };
+    if (this.hashPassword(password) !== this.password) {
+      throw { code: 'NO_AUTH', message: 'Authentication failed' };
+    }
+
     const payload = { id: this.id, role: this.role };
-    const token = jwt.sign(payload, security.secret, { expiresIn: '1d' });
+    const token = jsonwebtoken.sign(payload, security.secret, { expiresIn: '1d' });
 
     return token;
   }
