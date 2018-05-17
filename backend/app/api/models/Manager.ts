@@ -126,12 +126,9 @@ abstract class Manager {
    * @returns Model[]
    */
   hydrateObjects (rows:{}[]):any[] {
-    this.data = [];
-    rows.forEach(row => {
-      this.data.push(new this.model(row));
+    return rows.map(row => {
+      return new this.model(row);
     });
-
-    return this.data;
   }
 }
 
