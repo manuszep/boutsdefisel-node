@@ -125,8 +125,16 @@ abstract class Manager {
    * @param rows {}][] list of mySQL rows
    * @returns Model[]
    */
-  hydrateObjects (rows:{}[]):any[] {
+  hydrateObjects (rows:{}[], mapping:{key: Manager} = null):any[] {
     return rows.map(row => {
+      if (mapping !== null) {
+        Object.keys(mapping).forEach(key => {
+          const data = row[key];
+          row[key] = mapping[key].getModel(data);
+          console.log(row[key]);
+        });
+      }
+
       return new this.model(row);
     });
   }

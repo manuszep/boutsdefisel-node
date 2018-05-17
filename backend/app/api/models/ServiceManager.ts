@@ -34,11 +34,11 @@ class ServiceManager extends Manager {
         }
 
         // Replace the user value in service object with the actual user data
-        return services.map(row => {
+        return this.hydrateObjects(services.map(row => {
           const uid = row.user;
           row.user = users[uid];
           return row;
-        });
+        }), {user: UserManager});
       })
       .catch(err => {
         throw err;

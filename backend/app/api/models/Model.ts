@@ -244,7 +244,7 @@ abstract class Model {
         }
 
         if (typeof data[propName].serialize === 'function' || typeof data[propName].id !== 'undefined') {
-          if (forDb) {
+          if (!forDb) {
             data[propName] = data[propName].serialize(forDb);
           } else {
             data[propName] = data[propName].id;

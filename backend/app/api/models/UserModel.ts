@@ -52,7 +52,7 @@ class UserModel extends Model {
    */
   constructor (data?:{ [key: string]: any }) {
     super();
-
+    
     this.generateSalt();
     this.unserialize(data);
   }
