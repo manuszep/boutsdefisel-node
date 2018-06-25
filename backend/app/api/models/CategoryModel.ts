@@ -60,10 +60,11 @@ class CategoryModel extends Model {
     this._props.children = children;
   }
 
-  public setParent (parent:CategoryModel|number) {
+  public setParent (parent:any) {
     if (typeof parent === 'undefined' || parent === null) return;
-    if (typeof parent === 'number') {
-      this.parent = parent;
+    console.log(parent);
+    if (typeof parent === 'number' || typeof parseInt(parent) === 'number') {
+      this.parent = parseInt(parent);
     } else {
       this.parent = parent.id;
       this.lvl = parent.lvl + 1;

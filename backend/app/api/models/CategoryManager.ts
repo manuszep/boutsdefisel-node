@@ -75,7 +75,7 @@ class CategoryManager extends Manager {
   /**
    * Loop over mySQL rows and hydrate as CategoryModel
    *
-   * @param rows {}][] list of mySQL rows
+   * @param rows {}[] list of mySQL rows
    * @returns UserModel[]
    */
   hydrateObjects (rows:{[key:string]:any}[]):CategoryModel[] {

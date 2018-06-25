@@ -30,7 +30,7 @@ abstract class Manager {
    *
    * @returns Promise<any>
    */
-  protected query (query, data):Promise<any> {
+  protected query (query, data?):Promise<any> {
     return new Promise((resolve, reject) => {
       db.query(query, data)
         .then(result => {
@@ -83,11 +83,11 @@ abstract class Manager {
    *
    * @returns Promise<{}[]>
    */
-  findAll ():Promise<{}[]> {
+  findAll ():Promise<{[key:string]:any}[]> {
     return this.getFindAllQuery()
       .then(result => {
         this.data = result;
-        return this.data;
+        return this.hydrateObjects(this.data);
       });
   }
 
@@ -125,7 +125,7 @@ abstract class Manager {
    * @param rows {}][] list of mySQL rows
    * @returns Model[]
    */
-  hydrateObjects (rows:{}[], mapping:{key: Manager} = null):any[] {
+  hydrateObjects (rows:{}[], mapping:{[key:string]: Manager} = null):any[] {
     return rows.map(row => {
       if (mapping !== null) {
         Object.keys(mapping).forEach(key => {

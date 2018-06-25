@@ -1,7 +1,6 @@
 import UserController from '../controllers/UserController';
 
 export default function (app, verifyToken) {
-  // todoList Routes
   app.route('/users')
     .get(UserController.listAllUsers)
     .post(verifyToken, UserController.createUser);

@@ -66,4 +66,28 @@ export default {
         handleError(res, err);
       });
   },
+  deleteExchange: (req, res) => {
+    const data = { ...req.body };
+    let exchange;
+    ExchangeManager.findOne(req.params.id)
+      .then(result => {
+        exchange = result;
+        return UserManager.findOne(exchange.creditUser);
+      })
+      .then(result => {
+        data.creditUser = result;
+        return UserManager.findOne(exchange.debitUser);
+      })
+      .then(result => {
+        data.debitUser = result;
+        exchange.unserialize(data);
+        return exchange.delete();
+      })
+      .then(result => {
+        res.json(result);
+      })
+      .catch(err => {
+        handleError(res, err);
+      });
+  }
 };

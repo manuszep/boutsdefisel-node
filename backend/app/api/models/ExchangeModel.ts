@@ -16,8 +16,8 @@ class ExchangeModel extends Model {
     debitUser?:UserModel,
     message?:string,
     amount?:number,
-    hide?:boolean
-  };
+    hidden?:boolean
+  } = {};
 
   /**
    * Initialize object
@@ -27,6 +27,7 @@ class ExchangeModel extends Model {
   constructor (data?:{ [key: string]: any }) {
     super();
 
+    this.hidden = false;
     this.unserialize(data);
   }
 
@@ -43,10 +44,57 @@ class ExchangeModel extends Model {
   set message (message:string) { this.setPersistableValue('message', message); }
 
   get amount ():number { return this._fields.amount; }
-  set amount (amount:number) { this.setPersistableValue('amount', amount); }
+  set amount (amount:number) { this.setPersistableValue('amount', parseFloat(amount)); }
 
-  get hide ():boolean { return this._fields.hide; }
-  set hide (hide:boolean) { this.setPersistableValue('hide', hide); }
+  get hidden ():boolean { return this._fields.hidden; }
+  set hidden (hidden:boolean) { this.setPersistableValue('hidden', hidden); }
+
+  /**
+   * Extend update method to update users balance
+   */
+  protected update ():Promise<any> {
+    const oldAmount = this._dirty.amount || 0;
+    const diffAmount = this.amount - oldAmount;
+
+    return super.update()
+    .then(() => {
+      this.updateUsers(diffAmount);
+    });
+  }
+
+  /**
+   * Extend create method to update users balance
+   */
+  protected create ():Promise<any> {
+    return super.create()
+    .then(() => {
+      this.updateUsers(this.amount);
+    });
+  }
+
+  /**
+   * Extend delete method to update users balance
+   */
+  delete ():Promise<any> {
+    const diffAmount = -this.amount;
+
+    return super.delete()
+    .then(() => {
+      return this.updateUsers(diffAmount);
+    });
+  }
+
+  private updateUsers(amount:number):Promise<any> {
+    this.debitUser.debit(amount);
+    this.creditUser.credit(amount);
+
+    return this.debitUser.persist()
+    .then(() => {
+      return this.creditUser.persist();
+    }).catch(err => {
+      throw err;
+    });
+  }
 }
 
 export default ExchangeModel;

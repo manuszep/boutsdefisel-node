@@ -1,7 +1,6 @@
 import CategoryController from '../controllers/CategoryController';
 
 export default function (app, verifyToken) {
-  // todoList Routes
   app.route('/categories')
     .get(CategoryController.listAllCategories)
     .post(verifyToken, CategoryController.createCategory);

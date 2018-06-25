@@ -42,7 +42,8 @@ class UserModel extends Model {
   } = {
     enabled: false,
     locked: false,
-    role: ROLE_USER
+    role: ROLE_USER,
+    balance: 0
   };
 
   /**
@@ -52,7 +53,7 @@ class UserModel extends Model {
    */
   constructor (data?:{ [key: string]: any }) {
     super();
-    
+
     this.generateSalt();
     this.unserialize(data);
   }
@@ -191,7 +192,7 @@ class UserModel extends Model {
     this.setPersistableValue('mobile2', phoneReverseTransform(mobile2));
   }
 
-  get balance ():number { return this._fields.balance; }
+  get balance ():number { return (this._fields.balance !== null) ? this._fields.balance : 0; }
   set balance (balance:number) { this.setPersistableValue('balance', balance); }
 
   get picture ():string { return this._fields.picture; }
@@ -248,6 +249,16 @@ class UserModel extends Model {
     }
 
     return data;
+  }
+
+  credit (amount:number):number {
+    this.balance = this.balance + amount;
+    return this.balance;
+  }
+
+  debit (amount:number):number {
+    this.balance = this.balance - amount;
+    return this.balance;
   }
 }
 

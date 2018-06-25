@@ -9,7 +9,7 @@
             "request": "launch",
             "cwd": "${workspaceFolder}/backend/app",
             "name": "Launch in Docker",
-            "preLaunchTask": "tsc-watch",
+            //"preLaunchTask": "tsc-watch",
             "runtimeExecutable": "npm",
             "runtimeArgs": [ "run", "docker-debug" ],
             "port": 9222,

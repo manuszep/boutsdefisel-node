@@ -1,7 +1,6 @@
 import ServiceController from '../controllers/ServiceController';
 
 export default function (app, verifyToken) {
-  // todoList Routes
   app.route('/services')
     .get(ServiceController.listAllServices)
     .post(verifyToken, ServiceController.createService);

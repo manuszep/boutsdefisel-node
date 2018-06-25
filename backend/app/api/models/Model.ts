@@ -12,7 +12,7 @@ abstract class Model {
   // Tells if the entity is already in the DB
   protected _inDb:boolean = false;
   // Stores a list of fields that are changed
-  protected _dirty:{ [s: string]: boolean; } = {};
+  protected _dirty:{ [s: string]: any; } = {};
   // List of database fields
   protected _fields:{ [s: string]: any };
   // List of model properties that are not persisted directly
@@ -42,8 +42,8 @@ abstract class Model {
    * Add a field to the dirty list
    * @param key string The name of the field
    */
-  protected setDirty (key:string) {
-    this._dirty[key] = true;
+  protected setDirty (key:string, value:any) {
+    this._dirty[key] = value;
   }
 
   /**
@@ -83,7 +83,7 @@ abstract class Model {
    */
   protected setPersistableValue (name:string, value:any):boolean {
     if (typeof value === 'undefined' || value === this[name]) return false;
-    this.setDirty(name);
+    this.setDirty(name, this[name] || null);
     this._fields[name] = value;
     return true;
   }
@@ -176,7 +176,7 @@ abstract class Model {
 
     return this.query(
       `INSERT INTO ${this.tableName} SET ?`,
-      this.serialize()
+      this.serialize(true)
     ).then(result => {
       this.id = result.insertId;
       return this.id;

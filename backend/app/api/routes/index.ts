@@ -2,6 +2,7 @@ import config from '../../config/security';
 import UserRoute from './UserRoute';
 import CategoryRoute from './CategoryRoute';
 import ServiceRoute from './ServiceRoute';
+import ExchangeRoute from './ExchangeRoute';
 
 import jwt = require('jsonwebtoken');
 
@@ -31,4 +32,5 @@ export default app => {
   UserRoute(app, verifyJWTToken);
   CategoryRoute(app, verifyJWTToken);
   ServiceRoute(app, verifyJWTToken);
+  ExchangeRoute(app, verifyJWTToken);
 };

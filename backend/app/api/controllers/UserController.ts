@@ -4,7 +4,7 @@ import { handleError } from '../../lib/error';
 export default {
   listAllUsers: (req, res) => {
     UserManager.findAll().then(rows => {
-      res.json(rows);
+      res.json(UserManager.serializeCollection(rows));
     })
       .catch(err => {
         handleError(res, err);

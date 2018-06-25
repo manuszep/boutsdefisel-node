@@ -66,3 +66,19 @@ CREATE TABLE `services` (
   FOREIGN KEY (`user`) REFERENCES users(`id`),
   FOREIGN KEY (`category`) REFERENCES categories(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+CREATE TABLE `exchanges` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) NOT NULL,
+  `creditUser` int(11) NOT NULL,
+  `debitUser` int(11) NOT NULL,
+  `message` text,
+  `amount` float(4,2) NOT NULL,
+  `hidden` boolean NOT NULL DEFAULT 0,
+  `createdAt` datetime NOT NULL,
+  `updatedAt` datetime NOT NULL,
+  `deletedAt` datetime,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`creditUser`) REFERENCES users(`id`),
+  FOREIGN KEY (`debitUser`) REFERENCES users(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
