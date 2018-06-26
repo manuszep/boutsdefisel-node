@@ -44,7 +44,7 @@ class ExchangeModel extends Model {
   set message (message:string) { this.setPersistableValue('message', message); }
 
   get amount ():number { return this._fields.amount; }
-  set amount (amount:number) { this.setPersistableValue('amount', parseFloat(amount)); }
+  set amount (amount:number) { this.setPersistableValue('amount', Number(amount)); }
 
   get hidden ():boolean { return this._fields.hidden; }
   set hidden (hidden:boolean) { this.setPersistableValue('hidden', hidden); }
