@@ -9,3 +9,4 @@
   - Store metadata
 - FAQ
 - Stats
+- Add CSRF token support to protect forms
