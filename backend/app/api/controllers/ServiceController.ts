@@ -1,3 +1,4 @@
+import fs = require('fs');
 import ServiceManager from '../models/ServiceManager';
 import UserManager from '../models/UserManager';
 import CategoryManager from '../models/CategoryManager';
@@ -13,8 +14,12 @@ export default {
       });
   },
   createService: (req, res) => {
-    const data = { ...req.body };
     let service;
+    const data = { ...req.body };
+
+    if (typeof req.file !== "undefined") {
+      data.picture = `${req.file.destination}/${req.file.filename}`;
+    }
 
     UserManager.findOne(req.body.user)
       .then(result => {
@@ -31,6 +36,10 @@ export default {
         res.json(service.serialize());
       })
       .catch(err => {
+        if (typeof data.picture !== "undefined") {
+          fs.unlink(data.picture, (err2) => {return;});
+        }
+
         handleError(res, err);
       });
   },
@@ -43,8 +52,12 @@ export default {
       });
   },
   updateService: (req, res) => {
-    const data = { ...req.body };
     let service;
+    const data = { ...req.body };
+
+    if (typeof req.file !== "undefined") {
+      data.picture = `${req.file.destination}/${req.file.filename}`;
+    }
 
     ServiceManager.findOneBySlug(req.params.slug)
       .then(result => {
@@ -64,12 +77,22 @@ export default {
         res.json(service.serialize());
       })
       .catch(err => {
+        if (typeof data.picture !== "undefined") {
+          fs.unlink(data.picture, (err2) => {return;});
+        }
         handleError(res, err);
       });
   },
   deleteService: (req, res) => {
     ServiceManager.findOneBySlug(req.params.slug)
-      .then(service => service.delete())
+      .then(service => {
+        const file = service.picture;
+        service.delete();
+
+        if (file) {
+          fs.unlink(file, (err) => {return;});
+        }
+      })
       .then(result => {
         res.json(result);
       })

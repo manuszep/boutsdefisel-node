@@ -3,7 +3,8 @@ const codes = {
   NO_CHANGES: 500,
   ALREADY_DELETED: 500,
   NO_AUTH: 403,
-  NOT_FOUND: 404
+  NOT_FOUND: 404,
+  CANNOT_DELETE: 500
 };
 
 export const handleError = (res, err) => {
