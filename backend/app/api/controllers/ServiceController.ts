@@ -1,3 +1,4 @@
+import fs = require('fs');
 import ServiceManager from '../models/ServiceManager';
 import UserManager from '../models/UserManager';
 import CategoryManager from '../models/CategoryManager';
@@ -35,6 +36,12 @@ export default {
         res.json(service.serialize());
       })
       .catch(err => {
+        if (typeof data.picture !== "undefined") {
+          fs.unlink(data.picture, (err2) => {
+            return;
+          });
+        }
+
         handleError(res, err);
       });
   },
@@ -72,6 +79,11 @@ export default {
         res.json(service.serialize());
       })
       .catch(err => {
+        if (typeof data.picture !== "undefined") {
+          fs.unlink(data.picture, (err2) => {
+            return;
+          });
+        }
         handleError(res, err);
       });
   },
