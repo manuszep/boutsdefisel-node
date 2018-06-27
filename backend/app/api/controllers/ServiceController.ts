@@ -14,6 +14,7 @@ export default {
   },
   createService: (req, res) => {
     const data = { ...req.body };
+    data.picture = `${req.file.destination}/${req.file.filename}`;
     let service;
 
     UserManager.findOne(req.body.user)

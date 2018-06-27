@@ -19,3 +19,9 @@ export const camelize = (val:string, first:boolean = false):string => {
 
   return (first) ? tmp.charAt(0).toUpperCase() + tmp.slice(1) : tmp;
 };
+
+export const uuid = () => {
+  const s4 = () => Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+
+  return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+}
