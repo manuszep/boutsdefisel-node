@@ -47,8 +47,12 @@ export default {
       });
   },
   updateService: (req, res) => {
-    const data = { ...req.body };
     let service;
+    const data = { ...req.body };
+
+    if (typeof req.file !== "undefined") {
+      data.picture = `${req.file.destination}/${req.file.filename}`;
+    }
 
     ServiceManager.findOneBySlug(req.params.slug)
       .then(result => {
