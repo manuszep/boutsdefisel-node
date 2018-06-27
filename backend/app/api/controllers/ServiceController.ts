@@ -37,9 +37,7 @@ export default {
       })
       .catch(err => {
         if (typeof data.picture !== "undefined") {
-          fs.unlink(data.picture, (err2) => {
-            return;
-          });
+          fs.unlink(data.picture, (err2) => {return;});
         }
 
         handleError(res, err);
@@ -80,17 +78,23 @@ export default {
       })
       .catch(err => {
         if (typeof data.picture !== "undefined") {
-          fs.unlink(data.picture, (err2) => {
-            return;
-          });
+          fs.unlink(data.picture, (err2) => {return;});
         }
         handleError(res, err);
       });
   },
   deleteService: (req, res) => {
     ServiceManager.findOneBySlug(req.params.slug)
-      .then(service => service.delete())
+      .then(service => {
+        const file = service.picture;
+        service.delete();
+
+        if (file) {
+          fs.unlink(file, (err) => {return;});
+        }
+      })
       .then(result => {
+
         res.json(result);
       })
       .catch(err => {
