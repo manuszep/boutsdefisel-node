@@ -13,9 +13,12 @@ export default {
       });
   },
   createService: (req, res) => {
-    const data = { ...req.body };
-    data.picture = `${req.file.destination}/${req.file.filename}`;
     let service;
+    const data = { ...req.body };
+
+    if (typeof req.file !== "undefined") {
+      data.picture = `${req.file.destination}/${req.file.filename}`;
+    }
 
     UserManager.findOne(req.body.user)
       .then(result => {
