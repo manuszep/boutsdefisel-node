@@ -1,7 +1,9 @@
+require('./env.ts');
+
 import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
 import { it } from 'mocha';
-import CategoryModel from './CategoryModel';
+import CategoryModel from '../api/models/CategoryModel';
 
 before(() => {
   chai.should();

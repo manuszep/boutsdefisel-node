@@ -1,6 +1,13 @@
 import Model from './Model';
 import { slugify } from '../../lib/utils';
 
+export type CategoryType = {
+  title?:string,
+  lvl?:number,
+  parent?:number,
+  slug?:string
+}
+
 /**
  * CategoryModel
  *
@@ -10,12 +17,7 @@ class CategoryModel extends Model {
   // Name of the database table
   public tableName = 'categories';
 
-  protected _fields:{
-    title?:string,
-    lvl?:number,
-    'parent'?:number,
-    slug?:string,
-  } = {};
+  protected _fields: CategoryType = {};
 
   protected _props:{
     services?:number[],
@@ -62,7 +64,7 @@ class CategoryModel extends Model {
 
   public setParent (parent:any) {
     if (typeof parent === 'undefined' || parent === null) return;
-    console.log(parent);
+
     if (typeof parent === 'number' || typeof parseInt(parent) === 'number') {
       this.parent = parseInt(parent);
     } else {

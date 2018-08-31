@@ -73,8 +73,8 @@ export default {
         service.unserialize(data);
         return service.persist();
       })
-      .then(() => {
-        res.json(service.serialize());
+      .then((result) => {
+        res.json(result);
       })
       .catch(err => {
         if (typeof data.picture !== "undefined") {
@@ -84,14 +84,19 @@ export default {
       });
   },
   deleteService: (req, res) => {
+    let file;
+
     ServiceManager.findOneBySlug(req.params.slug)
       .then(service => {
-        const file = service.picture;
-        service.delete();
+        file = service.picture;
+        return service.delete()
+        .then((result) => {
+          if (file) {
+            return fs.unlink(file, (err) => {return result;});
+          }
 
-        if (file) {
-          fs.unlink(file, (err) => {return;});
-        }
+          return result;
+        });
       })
       .then(result => {
         res.json(result);

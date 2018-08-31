@@ -3,6 +3,17 @@ import CategoryModel from './CategoryModel';
 import UserModel from './UserModel';
 import { slugify } from '../../lib/utils';
 
+export type ServiceType = {
+  title?: string,
+  slug?: string,
+  body?: string,
+  user?: UserModel,
+  type?: number,
+  domain?: number,
+  category?: CategoryModel,
+  picture?: string,
+  expiresAt?: Date
+}
 /**
  * ServiceModel
  *
@@ -12,17 +23,7 @@ class ServiceModel extends Model {
   // Name of the database table
   public tableName = 'services';
 
-  protected _fields:{
-    title?:string,
-    slug?:string,
-    body?:string,
-    user?:UserModel,
-    type?:number,
-    domain?:number,
-    category?:CategoryModel,
-    picture?:string,
-    expiresAt?:Date
-  } = {};
+  protected _fields:ServiceType = {};
 
   /**
    * Initialize object

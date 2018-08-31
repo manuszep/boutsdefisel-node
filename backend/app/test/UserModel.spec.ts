@@ -1,8 +1,10 @@
+require('./env.ts');
+
 import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
 import { it } from 'mocha';
-import UserModel from './UserModel';
-import { ROLE_USER, ROLE_COCO } from '../../lib/roles';
+import UserModel from '../api/models/UserModel';
+import { ROLE_USER, ROLE_COCO } from '../lib/roles';
 
 before(() => {
   chai.should();
@@ -151,7 +153,7 @@ describe('User Serialise', () => {
   it('should serialize data', () => {
     const user = createFullUser();
 
-    const serialised = user.serialize();
+    const serialised = user.serialize(true);
 
     chai.expect(serialised.username).to.not.be.undefined;
     chai.expect(serialised.usernameCanonical).to.not.be.undefined;

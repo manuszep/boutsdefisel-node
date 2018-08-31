@@ -5,7 +5,6 @@ export default function (app, verifyToken) {
     .get(UserController.listAllUsers)
     .post(verifyToken, UserController.createUser);
 
-
   app.route('/users/:id')
     .get(verifyToken, UserController.readUser)
     .put(verifyToken, UserController.updateUser)

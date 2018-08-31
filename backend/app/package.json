@@ -48,6 +48,7 @@
     "eslint-plugin-import": "^2.11.0",
     "eslint-plugin-promise": "^3.7.0",
     "mocha": "^5.1.1",
+    "mocha-report-log": "0.0.4",
     "morgan": "^1.9.0",
     "ts-node": "^6.0.3",
     "tsc": "^1.20150623.0",

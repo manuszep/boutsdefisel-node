@@ -1,6 +1,15 @@
 import Model from './Model';
 import UserModel from './UserModel';
 
+export type ExchangeType = {
+  title?:string,
+  creditUser?:UserModel,
+  debitUser?:UserModel,
+  message?:string,
+  amount?:number,
+  hidden?:boolean
+}
+
 /**
  * ExchangeModel
  *
@@ -10,14 +19,7 @@ class ExchangeModel extends Model {
   // Name of the database table
   public tableName = 'exchanges';
 
-  protected _fields:{
-    title?:string,
-    creditUser?:UserModel,
-    debitUser?:UserModel,
-    message?:string,
-    amount?:number,
-    hidden?:boolean
-  } = {};
+  protected _fields: ExchangeType = {};
 
   /**
    * Initialize object

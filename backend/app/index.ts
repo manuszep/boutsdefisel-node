@@ -19,3 +19,5 @@ app.use(morgan('dev'));
 Routes(app);
 
 app.listen(port, domain);
+
+export default app;

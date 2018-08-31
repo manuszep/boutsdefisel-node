@@ -5,6 +5,32 @@ import { phoneReverseTransform } from '../../dataValidation/phoneValidation';
 
 import jsonwebtoken = require('jsonwebtoken');
 import crypto = require('crypto');
+
+export type UserType = {
+  username?:string,
+  usernameCanonical?:string,
+  email?:string,
+  emailCanonical?:string,
+  enabled?:boolean,
+  locked?:boolean,
+  salt?:string,
+  plainPassword?:string,
+  password?:string,
+  lastLogin?:Date,
+  confirmationToken?:string,
+  passwordRequestedAt?:Date,
+  role?:string,
+  street?:string,
+  streetNumber?:string,
+  streetBox?:string,
+  city?:string,
+  zip?:number,
+  phone?:string,
+  mobile?:string,
+  mobile2?:string,
+  balance?:number,
+  picture?:string
+}
 /**
  * UserModel
  *
@@ -51,7 +77,7 @@ class UserModel extends Model {
    *
    * @param data {} Map of key-values to initialize entity
    */
-  constructor (data?:{ [key: string]: any }) {
+  constructor (data?: UserType) {
     super();
 
     this.generateSalt();
@@ -206,7 +232,7 @@ class UserModel extends Model {
   }
 
   private hashPassword (password:string):string {
-    if (password !== null && password !== 'undefined') {
+    if (password !== null && typeof password !== 'undefined') {
       const hash = crypto.createHmac('sha512', this.salt); // Hashing algorithm sha512
       hash.update(password);
 

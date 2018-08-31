@@ -6,9 +6,9 @@ export default {
     UserManager.findAll().then(rows => {
       res.json(UserManager.serializeCollection(rows));
     })
-      .catch(err => {
-        handleError(res, err);
-      });
+    .catch(err => {
+      handleError(res, err);
+    });
   },
   createUser: (req, res) => {
     const user = UserManager.getModel(req.body);
@@ -24,9 +24,9 @@ export default {
     UserManager.findOne(req.params.id).then(user => {
       res.json(user.serialize());
     })
-      .catch(err => {
-        handleError(res, err);
-      });
+    .catch(err => {
+      handleError(res, err);
+    });
   },
   updateUser: (req, res) => {
     UserManager.findOne(req.params.id)

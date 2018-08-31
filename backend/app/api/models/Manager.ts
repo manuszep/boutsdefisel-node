@@ -131,7 +131,6 @@ abstract class Manager {
         Object.keys(mapping).forEach(key => {
           const data = row[key];
           row[key] = mapping[key].getModel(data);
-          console.log(row[key]);
         });
       }
 
