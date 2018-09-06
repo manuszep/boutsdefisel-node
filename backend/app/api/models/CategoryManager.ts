@@ -11,7 +11,7 @@ class CategoryManager extends Manager {
   // Database table name
   public tableName = 'categories';
 
-  getChildren (parentId:number, parentKey?:number):Promise<{[key:string]:number|{}[]}> {
+  getChildren (parentId: number, parentKey?: number): Promise<{[key:string]: {}}> {
     return new Promise((resolve, reject) => {
       this.query(`SELECT * FROM ${this.tableName} WHERE parent = ?`, parentId)
         .then(result => {
@@ -27,34 +27,39 @@ class CategoryManager extends Manager {
     });
   }
 
-  /**
-   * Fetch all categories from database
-   *
-   * @returns Promise<{}[]>
-   */
-  findAll ():Promise<{}[]> {
-    let data;
+  findAll(): Promise<CategoryModel[]> {
+    const levels = {};
+    const data = [];
 
-    return this.query(`SELECT * FROM ${this.tableName} WHERE lvl = ?`, 0)
+    return this.query(`SELECT * FROM ${this.tableName} ORDER BY lvl DESC`)
       .then(result => {
-        const promisesArray:Array<any> = [];
+        // Loop over results which are ordered by level DESC
+        for (let row of result) {
+          const childLevel = row.lvl + 1; // Get the level of children
+          const category = new CategoryModel(row);
 
-        result.forEach((row, index) => {
-          promisesArray.push(this.getChildren(row.id, index));
-        });
+          // Check if there's something stored in child level for the current category id
+          if (typeof levels[childLevel] !== "undefined" && typeof levels[childLevel][row.id] !== "undefined") {
+            // If so, add as children
+            category.children = levels[childLevel][row.id];
+          }
+          // If the current level is not root, store for later assignation to parent
+          if (row.lvl > 0) {
+            // Create new level key if it does not exist
+            levels[row.lvl] = levels[row.lvl] || {};
+            // Create array for parent if it does not exist
+            levels[row.lvl][row.parent] = levels[row.lvl][row.parent] || [];
 
-        data = result;
-
-        return Promise.all(promisesArray);
-      })
-      .then(result => {
-        result.forEach(row => {
-          data[row.key].children = row.data;
-        });
+            // Add current category to level/parent object for later use
+            levels[row.lvl][row.parent].push(category);
+          } else {
+            // If we're at root, category has all it's children and should go to final data object
+            data.push(category);
+          }
+        };
 
         return data;
       })
-      .then(result => this.hydrateObjects(result))
       .catch(err => { throw err });
   }
 

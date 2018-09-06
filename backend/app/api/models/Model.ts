@@ -270,8 +270,9 @@ abstract class Model {
         const camelizedPropName = `set${camelize(propName, true)}`;
         if (typeof this[camelizedPropName] === 'function') {
           this[camelizedPropName](data[propName]);
+        } else {
+          this[propName] = data[propName];
         }
-        this[propName] = data[propName];
       }
     });
   }

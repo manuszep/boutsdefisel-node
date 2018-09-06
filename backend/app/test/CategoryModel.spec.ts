@@ -58,13 +58,62 @@ describe('Category Setters', () => {
 
 describe('Category Serialise', () => {
   it('should populate object properties and fields with constructor', () => {
-    const category = {
+    const category = new CategoryModel({
       id,
       title,
       lvl,
       parent,
       slug,
       children
-    };
+    });
+
+    chai.expect(category.id).to.equal(id);
+    chai.expect(category.title).to.equal(title);
+    chai.expect(category.lvl).to.equal(lvl);
+    chai.expect(category.parent).to.equal(parent);
+    chai.expect(category.slug).to.equal(slug);
+    chai.expect(category.children).to.equal(children);
+  });
+});
+
+describe('Category setParent', () => {
+  it('setParent should set the parent value and adapt lvl accordingly', () => {
+    const parentCategory = new CategoryModel({
+      id: 3,
+      title: "parent",
+      lvl: 0
+    });
+
+    const childCategory = new CategoryModel({
+      id: 4,
+      title: "child",
+      lvl: 0
+    });
+
+    childCategory.setParent(parentCategory);
+
+    chai.expect(childCategory.parent).to.equal(3);
+    chai.expect(childCategory.lvl).to.equal(1);
+  });
+});
+
+describe('Category setParent', () => {
+  it('setParent should set the parent value and adapt lvl accordingly', () => {
+    const parentCategory = new CategoryModel({
+      id: 3,
+      title: "parent",
+      lvl: 0
+    });
+
+    const childCategory = new CategoryModel({
+      id: 4,
+      title: "child",
+      lvl: 0
+    });
+
+    childCategory.setParent(parentCategory);
+
+    chai.expect(childCategory.parent).to.equal(3);
+    chai.expect(childCategory.lvl).to.equal(1);
   });
 });
