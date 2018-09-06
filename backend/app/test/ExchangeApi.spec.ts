@@ -54,7 +54,6 @@ describe('ServiceApi Testing', () => {
         .set('x-access-token', token)
         .send(exchange)
         .end((err, res) => {
-          logKeys(res.body);
           res.should.have.status(200);
           res.body.should.be.a('object');
           res.body.should.have.property('title').eql("Exchange 1");
