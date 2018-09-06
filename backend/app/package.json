@@ -14,7 +14,9 @@
     "lint": "eslint . --ext ts",
     "tslint": "tslint ./**/*.ts",
     "tsc": "tsc",
-    "logs": "pm2 logs"
+    "logs": "pm2 logs",
+    "test-report": "nyc report",
+    "stats": "cloc --exclude-dir=.nyc_output,alternative,dist,node_modules,public ."
   },
   "repository": {
     "type": "git",
@@ -43,6 +45,7 @@
     "@types/mocha": "^5.2.0",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
+    "cloc": "^2.3.3",
     "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-import": "^2.11.0",
