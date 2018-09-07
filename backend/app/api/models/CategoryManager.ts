@@ -11,22 +11,6 @@ class CategoryManager extends Manager {
   // Database table name
   public tableName = 'categories';
 
-  getChildren (parentId: number, parentKey?: number): Promise<{[key:string]: {}}> {
-    return new Promise((resolve, reject) => {
-      this.query(`SELECT * FROM ${this.tableName} WHERE parent = ?`, parentId)
-        .then(result => {
-          if (typeof parentKey !== 'undefined') {
-            resolve({ key: parentKey, data: result });
-          }
-
-          resolve(result);
-        })
-        .catch(err => {
-          reject(err);
-        });
-    });
-  }
-
   findAll(): Promise<CategoryModel[]> {
     const levels = {};
     const data = [];
