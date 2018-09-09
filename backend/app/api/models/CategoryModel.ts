@@ -83,7 +83,7 @@ class CategoryModel extends Model {
     }
 
     if (typeof this._dirty.parent !== "undefined") {
-      query = query + `CALL r_tree_traversal('move', ?, ?, NULL, NULL, NULL, NULL);`;
+      query = query + `CALL r_tree_traversal('move', ?, ?, NULL, NULL, NULL);`;
       params.push(this.id);
       params.push(this.parent);
     }
@@ -109,7 +109,7 @@ class CategoryModel extends Model {
     this.updatedAt = new Date();
 
     return this.query(
-      `CALL r_tree_traversal('insert', NULL, ?, ?, ?, ?, NULL)`,
+      `CALL r_tree_traversal('insert', NULL, ?, ?, ?, ?)`,
       [
         this.parent,
         this.title,
@@ -122,6 +122,21 @@ class CategoryModel extends Model {
     }).catch(err => {
       throw err;
     });
+  }
+
+  /**
+   * Deletes a row from the database. Actually, it just sets the deletedAt value
+   *
+   * @returns Promise<any> mySql response
+   */
+  delete ():Promise<any> {
+    return this.query(
+      `CALL r_tree_traversal('delete', ?, NULL, NULL, NULL, NULL)`,
+      [this.id])
+      .then(result => result)
+      .catch(err => {
+        throw err;
+      });
   }
 
   /**
