@@ -53,9 +53,9 @@ class CategoryManager extends Manager {
    * @param username string
    * @returns Promise<UserModel>
    */
-  findOneBySlug (slug:string):Promise<CategoryModel> {
-    const category = new CategoryModel({ slug });
-    return this.query(`SELECT * FROM ${this.tableName} WHERE slug = ?`, [category.slug])
+  findOneById (id:string):Promise<CategoryModel> {
+    const category = new CategoryModel({ id });
+    return this.query(`SELECT * FROM ${this.tableName} WHERE id = ?`, [category.id])
       .then(result => {
         return this.handleSingleResult(result, category);
       });

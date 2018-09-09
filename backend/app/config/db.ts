@@ -7,8 +7,9 @@ const database = process.env.DB_DATABASE || 'boutsdefisel';
 export default {
   host,
   port,
-  user: user,
-  password: password,
-  database: database,
-  charset: 'utf8'
+  user,
+  password,
+  database,
+  charset: 'utf8',
+  multipleStatements: true
 };
