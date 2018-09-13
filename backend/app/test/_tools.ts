@@ -6,6 +6,10 @@ import UserModel from '../api/models/UserModel';
 import UserManager from '../api/models/UserManager';
 import { ROLE_ADMIN } from '../lib/roles';
 
+const fs = require('fs');
+const installSql = fs.readFileSync('./dbSchema.sql').toString().split('${database_name}').join('boutsdefisel_test');
+
+
 const adminData = {
   "username": "admin",
   "email": "admin@test.com",
@@ -21,18 +25,12 @@ export const logKeys = (value) => {
 }
 
 export const cleanDb = () => {
-  return db.query("DELETE FROM exchanges;")
+  return db.query("DROP DATABASE `boutsdefisel_test`;")
     .then(() => {
-      return db.query("DELETE FROM services;")
+      return db.query("CREATE DATABASE `boutsdefisel_test`;")
     })
     .then(() => {
-      return db.query("DELETE FROM categories;")
-    })
-    .then(() => {
-      return db.query("DELETE FROM users;")
-    })
-    .then(() => {
-      return db.query("INSERT INTO categories (id, title, lft, rgt, parent, createdAt, updatedAt) VALUES (1, 'root', 0, 1, NULL, NOW(), NOW());");
+      return db.query(installSql)
     })
     .then(() => {
       return UserManager.getModel(adminData).persist();

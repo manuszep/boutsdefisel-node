@@ -1,8 +1,8 @@
-CREATE DATABASE IF NOT EXISTS `boutsdefisel` CHARACTER SET utf8 COLLATE utf8_general_ci;
+CREATE DATABASE IF NOT EXISTS `${database_name}` CHARACTER SET utf8 COLLATE utf8_general_ci;
 
-USE `boutsdefisel`;
+USE `${database_name}`;
 
-CREATE TABLE `users` (
+CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(255) NOT NULL,
   `usernameCanonical` varchar(255) NOT NULL,
@@ -34,7 +34,7 @@ CREATE TABLE `users` (
   UNIQUE KEY `key_emailCanonical` (`emailCanonical`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE `categories` (
+CREATE TABLE IF NOT EXISTS `categories` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(255) NOT NULL,
   `lft` int(11) NOT NULL,
@@ -45,7 +45,7 @@ CREATE TABLE `categories` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE `services` (
+CREATE TABLE IF NOT EXISTS `services` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(255) NOT NULL,
   `slug` varchar(255) NOT NULL,
@@ -65,7 +65,7 @@ CREATE TABLE `services` (
   FOREIGN KEY (`category`) REFERENCES categories(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE `exchanges` (
+CREATE TABLE IF NOT EXISTS `exchanges` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(255) NOT NULL,
   `creditUser` int(11) NOT NULL,
@@ -81,11 +81,11 @@ CREATE TABLE `exchanges` (
   FOREIGN KEY (`debitUser`) REFERENCES users(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-INSERT INTO categories (id, title, lft, rgt, parent, createdAt, updatedAt) VALUES (1, "root", 0, 1, NULL, NOW(), NOW());
+INSERT IGNORE INTO categories (id, title, lft, rgt, parent, createdAt, updatedAt) VALUES (1, "root", 0, 1, NULL, NOW(), NOW());
 
-CREATE VIEW `vw_lftrgt` AS select `categories`.`lft` AS `lft` from `categories` union select `categories`.`rgt` AS `rgt` from `categories`
+CREATE OR REPLACE VIEW `vw_lftrgt` AS select `categories`.`lft` AS `lft` from `categories` union select `categories`.`rgt` AS `rgt` from `categories`;
 
-DELIMITER $$
+DROP PROCEDURE IF EXISTS r_tree_traversal;
 
 CREATE PROCEDURE `r_tree_traversal`(
 
@@ -220,4 +220,4 @@ BEGIN
       END IF;
   END CASE;
 
-END
+END;

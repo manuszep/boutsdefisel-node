@@ -16,7 +16,9 @@
     "tsc": "tsc",
     "logs": "pm2 logs",
     "test-report": "nyc report",
-    "stats": "cloc --exclude-dir=.nyc_output,alternative,dist,node_modules,public ."
+    "stats": "cloc --exclude-dir=.nyc_output,alternative,dist,node_modules,public .",
+    "setup": "tsc && node ./dist/install.js",
+    "setup:drop": "tsc && node ./dist/install.js drop"
   },
   "repository": {
     "type": "git",
