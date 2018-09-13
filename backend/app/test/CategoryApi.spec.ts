@@ -1,10 +1,11 @@
 require('./env.ts');
+const async = require("async");
 
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const mochaLog = require('mocha-report-log');
 import { it } from 'mocha';
-import { cleanDb, getSecurityToken, logKeys } from './_tools';
+import { cleanDb, getSecurityToken } from './_tools';
 import App from '../index';
 import CategoryModel from '../api/models/CategoryModel';
 
@@ -13,8 +14,9 @@ chai.use(chaiHttp);
 
 let token = getSecurityToken();
 let category1: CategoryModel;
+let category2: CategoryModel;
 
-describe('ServiceApi Testing', () => {
+describe('CategoryApi Testing', () => {
   before(() => {
     return cleanDb()
     .catch(() => {
@@ -26,7 +28,7 @@ describe('ServiceApi Testing', () => {
     it('it should create a category', (done) => {
       let category = {
         "title": "Category 1",
-        "lvl": 0
+        "parent": 1
       };
 
       chai.request(App)
@@ -37,8 +39,7 @@ describe('ServiceApi Testing', () => {
           res.should.have.status(200);
           res.body.should.be.a('object');
           res.body.should.have.property('title').eql("Category 1");
-          res.body.should.have.property('slug').eql("category-1");
-          res.body.should.have.property('lvl').eql(0);
+          res.body.should.have.property('parent').eql(1);
           res.body.should.have.property('createdAt');
           res.body.should.have.property('updatedAt');
           res.body.should.have.property('id');
@@ -57,11 +58,10 @@ describe('ServiceApi Testing', () => {
         res.should.have.status(200);
         res.body.should.be.a('object');
         res.body.should.have.property('title').eql("Category 1");
-          res.body.should.have.property('slug').eql("category-1");
-          res.body.should.have.property('lvl').eql(0);
-          res.body.should.have.property('createdAt');
-          res.body.should.have.property('updatedAt');
-          res.body.should.have.property('id').eql(category1.id);
+        res.body.should.have.property('parent').eql(1);
+        res.body.should.have.property('createdAt');
+        res.body.should.have.property('updatedAt');
+        res.body.should.have.property('id').eql(category1.id);
         done();
       });
     });
@@ -73,23 +73,89 @@ describe('ServiceApi Testing', () => {
         "title": "Category 2"
       };
 
-      chai.request(App)
-      .put(`/categories/${category1.id}`)
-      .set('x-access-token', token)
-      .send(category)
-      .end((err, res) => {
-        res.should.have.status(200);
-        res.body.should.be.a('object');
-        res.body.should.have.property('fieldCount').eql(0);
-        res.body.should.have.property('affectedRows').eql(1);
-        res.body.should.have.property('insertId').eql(0);
-        res.body.should.have.property('serverStatus').eql(2);
-        res.body.should.have.property('warningCount').eql(0);
-        res.body.should.have.property('message');
-        res.body.should.have.property('protocol41').eql(true);
-        res.body.should.have.property('changedRows').eql(1);
-        done();
-      });
+      async.series([
+        function(cb) {
+          chai.request(App)
+            .put(`/categories/${category1.id}`)
+            .set('x-access-token', token)
+            .send(category)
+            .end((err, res) => {
+              res.should.have.status(200);
+              res.body.should.be.a('object');
+              res.body.should.have.property('fieldCount').eql(0);
+              res.body.should.have.property('affectedRows').eql(1);
+              res.body.should.have.property('insertId').eql(0);
+              res.body.should.have.property('serverStatus').eql(2);
+              res.body.should.have.property('warningCount').eql(0);
+              res.body.should.have.property('message');
+              res.body.should.have.property('protocol41').eql(true);
+              res.body.should.have.property('changedRows').eql(1);
+
+              cb()
+            })
+        },
+        function(cb) {
+          chai.request(App)
+          .get(`/categories/${category1.id}`)
+          .end((err, res) => {
+            res.should.have.status(200);
+            res.body.should.be.a('object');
+            res.body.should.have.property('title').eql("Category 2");
+            done();
+          })
+        }
+      ]);
+    });
+  });
+
+  describe('/PUT category (move)', () => {
+    it('it should update and move a category', (done) => {
+      let category2_data = {
+        "title": "Category 3",
+        "parent": 1
+      };
+
+      async.series([
+        function(cb) {
+          chai.request(App)
+            .post(`/categories`)
+            .set('x-access-token', token)
+            .send(category2_data)
+            .end((err, res) => {
+              res.should.have.status(200);
+              category2 = new CategoryModel(res.body);
+
+              cb();
+            });
+        },
+        function(cb) {
+          let category = {
+            "title": "Moved",
+            "parent": category1.id
+          };
+
+          chai.request(App)
+          .put(`/categories/${category2.id}`)
+          .set('x-access-token', token)
+          .send(category)
+          .end((err, res) => {
+            res.should.have.status(200);
+
+            cb();
+          });
+        },
+        function() {
+          chai.request(App)
+          .get(`/categories/${category1.id}`)
+          .end((err, res) => {
+            res.should.have.status(200);
+            res.body.should.be.a('object');
+            res.body.children[0].should.have.property('title').eql("Moved");
+
+            done();
+          });
+        }
+      ]);
     });
   });
 
@@ -99,8 +165,12 @@ describe('ServiceApi Testing', () => {
       .get(`/categories`)
       .end((err, res) => {
         res.should.have.status(200);
-        res.body.should.be.a('array');
-        res.body.length.should.be.eql(1);
+        res.body.should.be.a('object');
+        res.body.title.should.be.eql("root");
+        res.body.children.should.be.a("array");
+        res.body.children.length.should.be.eql(1);
+        res.body.children[0].title.should.be.eql("Category 2");
+        res.body.children[0].children[0].title.should.be.eql("Moved");
         done();
       });
     });
@@ -108,33 +178,36 @@ describe('ServiceApi Testing', () => {
 
   describe('/DELETE category', () => {
     it('it should delete a category', (done) => {
-      chai.request(App)
-        .delete(`/categories/${category1.id}`)
-        .set('x-access-token', token)
-        .end((err, res) => {
-          res.should.have.status(200);
-          res.body.should.be.a('object');
-          res.body.should.have.property('fieldCount').eql(0);
-          res.body.should.have.property('affectedRows').eql(1);
-          res.body.should.have.property('insertId').eql(0);
-          res.body.should.have.property('serverStatus');
-          res.body.should.have.property('warningCount').eql(0);
-          res.body.should.have.property('message');
-          res.body.should.have.property('protocol41').eql(true);
-          res.body.should.have.property('changedRows').eql(1);
-          done();
-        });
-    });
+      async.series([
+        function(cb) {
+          chai.request(App)
+            .delete(`/categories/${category1.id}`)
+            .set('x-access-token', token)
+            .end((err, res) => {
+              res.should.have.status(200);
 
-    it('it should have a deletedAt field', (done) => {
-      chai.request(App)
-        .get(`/categories/${category1.id}`)
-        .set('x-access-token', token)
-        .end((err, res) => {
-          res.should.have.status(200);
-          res.body.should.have.property('deletedAt');
-          done();
-        });
+              cb();
+            });
+        },
+        function(cb) {
+          chai.request(App)
+          .get(`/categories/${category1.id}`)
+          .end((err, res) => {
+            res.should.have.status(404);
+
+            cb();
+          });
+        },
+        function() {
+          chai.request(App)
+          .get(`/categories/${category2.id}`)
+          .end((err, res) => {
+            res.should.have.status(404);
+
+            done();
+          });
+        }
+      ]);
     });
   });
 

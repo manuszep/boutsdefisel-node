@@ -4,6 +4,7 @@ import UserModel from './UserModel';
 import { slugify } from '../../lib/utils';
 
 export type ServiceType = {
+  id?:number,
   title?: string,
   slug?: string,
   body?: string,

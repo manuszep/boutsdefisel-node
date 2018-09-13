@@ -2,6 +2,7 @@ import Model from './Model';
 import UserModel from './UserModel';
 
 export type ExchangeType = {
+  id?:number,
   title?:string,
   creditUser?:UserModel,
   debitUser?:UserModel,

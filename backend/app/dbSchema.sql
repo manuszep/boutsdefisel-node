@@ -41,7 +41,7 @@ CREATE TABLE `categories` (
   `rgt` int(11) NOT NULL,
   `parent` int(11),
   `createdAt` datetime NOT NULL,
-  `updatedAt` datetime NOT NULL
+  `updatedAt` datetime NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
@@ -81,7 +81,7 @@ CREATE TABLE `exchanges` (
   FOREIGN KEY (`debitUser`) REFERENCES users(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-INSERT INTO categories (title, lft, rgt, parent, createdAt, updatedAt, deletedAt) VALUES ("root", 0, 1, NULL, NOW(), NOW(), NULL);
+INSERT INTO categories (id, title, lft, rgt, parent, createdAt, updatedAt) VALUES (1, "root", 0, 1, NULL, NOW(), NOW());
 
 CREATE VIEW `vw_lftrgt` AS select `categories`.`lft` AS `lft` from `categories` union select `categories`.`rgt` AS `rgt` from `categories`
 
@@ -95,7 +95,6 @@ CREATE PROCEDURE `r_tree_traversal`(
   IN title VARCHAR(255),
   IN createdAt DATETIME,
   IN updatedAt DATETIME
-
 )
 BEGIN
 
@@ -108,8 +107,8 @@ BEGIN
       SELECT rgt INTO new_lft FROM categories WHERE id = pparent_id;
       UPDATE categories SET rgt = rgt + 2 WHERE rgt >= new_lft;
       UPDATE categories SET lft = lft + 2 WHERE lft > new_lft;
-      INSERT INTO categories (title, lft, rgt, parent, createdAt, updatedAt, deletedAt) VALUES (title, new_lft, (new_lft + 1), pparent_id, createdAt, updatedAt, deletedAt);
-        SELECT LAST_INSERT_ID();
+      INSERT INTO categories (title, lft, rgt, parent, createdAt, updatedAt) VALUES (title, new_lft, (new_lft + 1), pparent_id, createdAt, updatedAt);
+      SELECT LAST_INSERT_ID() as insertId;
 
     WHEN 'delete' THEN
 
@@ -119,9 +118,9 @@ BEGIN
 
       DELETE FROM categories WHERE id = pnode_id;
 
-      DELETE FROM categories WHERE lft BETWEEN new_lft AND new_rgt;
-      UPDATE categories SET rgt = rgt - width WHERE rgt > new_rgt;
-      UPDATE categories SET lft = lft - width WHERE lft > new_rgt;
+	  DELETE FROM categories WHERE lft BETWEEN new_lft AND new_rgt;
+	  UPDATE categories SET rgt = rgt - width WHERE rgt > new_rgt;
+	  UPDATE categories SET lft = lft - width WHERE lft > new_rgt;
 
     WHEN 'move' THEN
 
@@ -134,17 +133,16 @@ BEGIN
           `parent` int(11),
           `createdAt` datetime NOT NULL,
           `updatedAt` datetime NOT NULL,
-          `deletedAt` datetime,
           PRIMARY KEY (`id`)
         );
 
         TRUNCATE TABLE working_tree_map;
 
-        INSERT INTO working_tree_map (id, title, lft, rgt, parent, createdAt, updatedAt, deletedAt)
+        INSERT INTO working_tree_map (id, title, lft, rgt, parent, createdAt, updatedAt)
           SELECT t1.id, t1.title,
             (t1.lft - (SELECT MIN(lft) FROM categories WHERE id = pnode_id)) AS lft,
             (t1.rgt - (SELECT MIN(lft) FROM categories WHERE id = pnode_id)) AS rgt,
-          t1.parent, t1.createdAt, t1.updatedAt, t1.deletedAt
+          t1.parent, t1.createdAt, t1.updatedAt
           FROM categories AS t1, categories AS t2
           WHERE t1.lft BETWEEN t2.lft AND t2.rgt AND t2.id = pnode_id;
 
@@ -158,8 +156,8 @@ BEGIN
               rgt = (CASE WHEN rgt >= parent_rgt THEN rgt + subtree_size ELSE rgt END)
           WHERE rgt >= parent_rgt;
 
-        INSERT INTO categories (id, title, lft, rgt, parent, createdAt, updatedAt, deletedAt)
-          SELECT wtm.id, wtm.title, wtm.lft + parent_rgt, wtm.rgt + parent_rgt, wtm.parent, wtm.createdAt, wtm.updatedAt, wtm.deletedAt
+        INSERT INTO categories (id, title, lft, rgt, parent, createdAt, updatedAt)
+          SELECT wtm.id, wtm.title, wtm.lft + parent_rgt, wtm.rgt + parent_rgt, wtm.parent, wtm.createdAt, wtm.updatedAt
           FROM working_tree_map AS wtm;
 
         UPDATE categories

@@ -11,53 +11,30 @@ class CategoryManager extends Manager {
   // Database table name
   public tableName = 'categories';
 
-  findAll(): Promise<CategoryModel[]> {
-    const levels = {};
-    const data = [];
-
-    return this.query(`SELECT * FROM ${this.tableName} ORDER BY lvl DESC`)
+  findAll(): Promise<CategoryModel> {
+    return this.query(`SELECT * FROM ${this.tableName} ORDER BY lft ASC`)
       .then(result => {
-        // Loop over results which are ordered by level DESC
-        for (let row of result) {
-          const childLevel = row.lvl + 1; // Get the level of children
-          const category = new CategoryModel(row);
-
-          // Check if there's something stored in child level for the current category id
-          if (typeof levels[childLevel] !== "undefined" && typeof levels[childLevel][row.id] !== "undefined") {
-            // If so, add as children
-            category.children = levels[childLevel][row.id];
-          }
-          // If the current level is not root, store for later assignation to parent
-          if (row.lvl > 0) {
-            // Create new level key if it does not exist
-            levels[row.lvl] = levels[row.lvl] || {};
-            // Create array for parent if it does not exist
-            levels[row.lvl][row.parent] = levels[row.lvl][row.parent] || [];
-
-            // Add current category to level/parent object for later use
-            levels[row.lvl][row.parent].push(category);
-          } else {
-            // If we're at root, category has all it's children and should go to final data object
-            data.push(category);
-          }
-        };
-
-        return data;
+        return this.hydrateObjects(result);
       })
       .catch(err => { throw err });
   }
 
   /**
-   * Find a user from database based on username then hydrate as object
+   * Find a category from database based on id then hydrate as object
    *
-   * @param username string
-   * @returns Promise<UserModel>
+   * @param id number
+   * @returns Promise<CategoryModel>
    */
-  findOneById (id:string):Promise<CategoryModel> {
-    const category = new CategoryModel({ id });
-    return this.query(`SELECT * FROM ${this.tableName} WHERE id = ?`, [category.id])
+  findOne (id:number):Promise<CategoryModel> {
+    return this.query(`SELECT lft, rgt INTO @plft, @prgt FROM categories where id = ? ORDER BY lft ASC; SELECT * FROM categories WHERE lft >= @plft AND rgt <= @prgt;`, [id])
       .then(result => {
-        return this.handleSingleResult(result, category);
+        if (!result[1].length) {
+          throw { code: 'NOT_FOUND' };
+        }
+
+        const data = this.hydrateObjects(result[1]);
+        data.setClean();
+        return data;
       });
   }
 
@@ -65,17 +42,25 @@ class CategoryManager extends Manager {
    * Loop over mySQL rows and hydrate as CategoryModel
    *
    * @param rows {}[] list of mySQL rows
-   * @returns UserModel[]
+   * @returns CategoryModel[]
    */
-  hydrateObjects (rows:{[key:string]:any}[]):CategoryModel[] {
-    const data = [];
-    rows.forEach(row => {
-      if (typeof row.children !== 'undefined' && row.children !== null) {
-        row.children = this.hydrateObjects(row.children);
+  hydrateObjects (rows:{[key:string]:any}[]):CategoryModel {
+    const items:{[key:number]: CategoryModel} = {};
+    let data:CategoryModel;
+
+    for (let row of rows) {
+      items[row.id] = new CategoryModel(row);
+
+      // Rows should be sorted by lft ASC. So first item in array is root
+      if (typeof data === "undefined") {
+        data = items[row.id];
+        continue;
       }
 
-      data.push(new CategoryModel(row));
-    });
+      if (typeof items[row.parent] !== "undefined") {
+        items[row.parent].addChild(items[row.id]);
+      }
+    }
 
     return data;
   }

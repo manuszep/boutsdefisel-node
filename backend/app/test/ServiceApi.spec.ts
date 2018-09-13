@@ -19,8 +19,7 @@ let user1 = new UserModel({
   password: "user1"
 });
 let category1 = new CategoryModel({
-  title: "Category 1",
-  lvl: 0
+  title: "Category 1"
 });
 let service1: ServiceModel;
 let token = getSecurityToken();
@@ -35,6 +34,7 @@ describe('ServiceApi Testing', () => {
       return category1.persist();
     })
     .catch((err) => {
+      console.log(err);
       mochaLog("Could not clean the DB or get a token.");
     });
   });

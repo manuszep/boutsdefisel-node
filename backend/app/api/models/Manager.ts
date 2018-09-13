@@ -42,7 +42,7 @@ abstract class Manager {
     });
   }
 
-  public serializeCollection (data:any[]):{[key:string]:any}[] {
+  public serializeCollection (data:{[key:string]:any}[]):{[key:string]:any}[] {
     const res = [];
 
     data.forEach(item => {
@@ -83,7 +83,7 @@ abstract class Manager {
    *
    * @returns Promise<{}[]>
    */
-  findAll ():Promise<{[key:string]:any}[]> {
+  findAll ():Promise<any> {
     return this.getFindAllQuery()
       .then(result => {
         this.data = result;
@@ -125,7 +125,7 @@ abstract class Manager {
    * @param rows {}][] list of mySQL rows
    * @returns Model[]
    */
-  hydrateObjects (rows:{}[], mapping:{[key:string]: Manager} = null):any[] {
+  hydrateObjects (rows:{}[], mapping:{[key:string]: Manager} = null):any[] | any {
     return rows.map(row => {
       if (mapping !== null) {
         Object.keys(mapping).forEach(key => {
@@ -140,3 +140,5 @@ abstract class Manager {
 }
 
 export default Manager;
+
+

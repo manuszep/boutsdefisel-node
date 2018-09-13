@@ -7,6 +7,7 @@ import jsonwebtoken = require('jsonwebtoken');
 import crypto = require('crypto');
 
 export type UserType = {
+  id?:number,
   username?:string,
   usernameCanonical?:string,
   email?:string,

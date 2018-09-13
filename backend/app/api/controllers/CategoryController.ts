@@ -3,8 +3,8 @@ import { handleError } from '../../lib/error';
 
 export default {
   listAllCategories: (req, res) => {
-    CategoryManager.findAll().then(rows => {
-      res.json(CategoryManager.serializeCollection(rows));
+    CategoryManager.findAll().then(category => {
+      res.json(category.serialize());
     })
       .catch(err => {
         handleError(res, err);
@@ -13,10 +13,11 @@ export default {
   createCategory: (req, res) => {
     const category = CategoryManager.getModel(req.body);
     category.persist()
-      .then(() => {
+      .then((result) => {
         res.json(category.serialize());
       })
       .catch(err => {
+        console.log(err);
         handleError(res, err);
       });
   },
@@ -25,6 +26,7 @@ export default {
       res.json(category.serialize());
     })
       .catch(err => {
+        console.log(err);
         handleError(res, err);
       });
   },
@@ -38,6 +40,7 @@ export default {
         res.json(result);
       })
       .catch(err => {
+        console.log(err);
         handleError(res, err);
       });
   },

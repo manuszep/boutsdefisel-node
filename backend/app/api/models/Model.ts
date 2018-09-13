@@ -257,7 +257,7 @@ abstract class Model {
   }
 
   /**
-   * Turns a serialized representation into an actual entiry
+   * Turns a serialized representation into an actual entity
    *
    * @param data object An {} of key-values
    * @returns any The entity object

@@ -3,8 +3,9 @@ import ServiceModel from './ServiceModel';
 import { slugify } from '../../lib/utils';
 
 export type CategoryType = {
+  id?:number,
   title?: string,
-  parent?: CategoryModel
+  parent?: CategoryModel | number
 }
 
 /**
@@ -32,12 +33,12 @@ class CategoryModel extends Model {
     super();
     this.unserialize(data);
   }
- //TODO: For insert, delete and parent change, the right stored procedure should be called
+
   get title (): string { return this._fields.title; }
   set title (title: string) { this.setPersistableValue('title', title); }
 
-  get parent (): CategoryModel { return this._fields.parent; }
-  set parent (parent: CategoryModel) { this.setPersistableValue('parent', parent); } //TODO: When parent changes, the update should call the stored procedure
+  get parent (): CategoryModel | number { return this._fields.parent; }
+  set parent (parent: CategoryModel | number) { this.setPersistableValue('parent', parent); }
 
   get services (): ServiceModel[] { return this._props.services; }
   set services (services: ServiceModel[]) {
@@ -50,6 +51,10 @@ class CategoryModel extends Model {
     if (typeof children === 'undefined' || !children.length || children === null) return;
     this._props.children = children;
   }
+
+  // Disable deletedAt field
+  get deletedAt ():null { return null; }
+  set deletedAt (val:null) { return; }
 
   public addService (service: ServiceModel) {
     if (typeof service === 'undefined' || service === null) return;
@@ -108,16 +113,22 @@ class CategoryModel extends Model {
     this.createdAt = new Date();
     this.updatedAt = new Date();
 
+    if (typeof this.parent === "undefined") {
+      this.parent = 1;
+    }
+
+    const parentId = (typeof this.parent === "number") ? this.parent : this.parent.id;
+
     return this.query(
       `CALL r_tree_traversal('insert', NULL, ?, ?, ?, ?)`,
       [
-        this.parent,
+        parentId,
         this.title,
         this.createdAt,
         this.updatedAt
       ]
     ).then(result => {
-      this.id = result.insertId;
+      this.id = result[0][0].insertId; // The stored procedure returns a nested response
       return this.id;
     }).catch(err => {
       throw err;
@@ -137,18 +148,6 @@ class CategoryModel extends Model {
       .catch(err => {
         throw err;
       });
-  }
-
-  /**
-   * Extend getDeleteQuery in order to cascade to children
-   *
-   * @returns Promise<any> mySql response
-   */
-  protected getDeleteQuery ():Promise<any> {
-    return this.query(
-      `UPDATE ${this.tableName} SET deletedAt = ? Where id = ${this.id} or parent = ${this.id}`,
-      this.deletedAt
-    );
   }
 }
 

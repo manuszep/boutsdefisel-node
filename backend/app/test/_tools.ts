@@ -32,6 +32,9 @@ export const cleanDb = () => {
       return db.query("DELETE FROM users;")
     })
     .then(() => {
+      return db.query("INSERT INTO categories (id, title, lft, rgt, parent, createdAt, updatedAt) VALUES (1, 'root', 0, 1, NULL, NOW(), NOW());");
+    })
+    .then(() => {
       return UserManager.getModel(adminData).persist();
     })
     .catch(err => {
